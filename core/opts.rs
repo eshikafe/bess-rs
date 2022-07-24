@@ -1,7 +1,7 @@
 use crate::bessd;
 use clap::Parser;
 use log::*;
-// use worker;
+use crate::worker::*;
 
 // Port this BESS instance listens on.
 // Panda came up with this default number
@@ -96,19 +96,19 @@ pub fn validate_iova_mode(value: &str) -> bool {
 // static bool _iova_dummy[[maybe_unused]] =
 //     google::RegisterFlagValidator(&FLAGS_iova, &ValidateIovaMode);
 
-pub fn validate_core_id(value: u32) -> bool {
-    if !is_cpu_present(value) {
-        error!("Invalid core ID: {}", value);
-        false
-    }
-    true
-}
+// pub fn validate_core_id(value: u32) -> bool {
+//     if !is_cpu_present(value) {
+//         error!("Invalid core ID: {}", value);
+//         false
+//     }
+//     true
+// }
 
 // static const bool _c_dummy[[maybe_unused]] = google::RegisterFlagValidator(&FLAGS_c, &ValidateCoreID);
 pub fn validate_tcp_port(value: u32) -> bool {
     if value <= 0 {
         error!("Invalid TCP port number: {}", value);
-        false
+        return false;
     }
     true
 }
@@ -119,7 +119,7 @@ pub fn validate_tcp_port(value: u32) -> bool {
 pub fn validate_megabytes_per_socket(value: u32) -> bool {
     if value < 0 {
         error!("Invalid memory size: {}", value);
-        false
+        return false;
     }
     true
 }
@@ -130,14 +130,15 @@ pub fn validate_megabytes_per_socket(value: u32) -> bool {
 pub fn validate_buffers_per_socket(value: u32) -> bool {
     if value <= 0 {
         error!("Invalid number of buffers: {}", value);
-        false
+        return false;
     }
-    if value & (value - 1) {
+
+    if (value & (value - 1)) > 0 {
         error!("Number of buffers must be a power of 2: {}", value);
-        false
+        return false;
     }
     true
 }
 
 // static const bool _buffers_dummy[[maybe_unused]] =
-//     google::RegisterFlagValidator(&FLAGS_buffers, &ValidateBuffersPerSocket);
+// google::RegisterFlagValidator(&FLAGS_buffers, &ValidateBuffersPerSocket);
