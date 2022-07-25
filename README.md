@@ -1,5 +1,5 @@
-# Data-plane (aka bess-rs)
-A dataplane implementation in Rust based on the BESS architecture for high performance packet processing.
+# Data-plane (bess-rs)
+A dataplane implementation in Rust based on the [BESS](https://github.com/NetSys/bess) architecture for high performance packet processing.
 Main use case: an experimental 5G UPF data-plane.
 
 ## Objective
@@ -15,3 +15,6 @@ These are some of the porting strategies (from C++ to Rust) that I am using for 
 - Use `log` and `env_logger` in place of `#include <glog/logging.h>`
 - C++ `namespace bess`  => Rust `mod bess_rs`. Same convention should be used for other namespaces.
 - `std::cout << .. << endl;` => `println!(..);`
+
+## Resources
+[A Guide to Porting C/C++ to Rust](https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/)
