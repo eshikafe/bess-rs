@@ -1,6 +1,5 @@
-# BESS Data-plane in Rust
-A dataplane implementation in Rust based on the [BESS](https://github.com/NetSys/bess) architecture for high performance packet processing.
-Main use case: an experimental 5G UPF data-plane.
+# BESS data-plane in Rust
+`bess-rs` is a Rust implementation of [BESS](https://github.com/NetSys/bess).
 
 ## Objective
 An experiment with Rust for high performance packet processing.
