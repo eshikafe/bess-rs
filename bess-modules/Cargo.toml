@@ -1,0 +1,9 @@
+[package]
+name = "bess-modules"
+version = "0.1.0"
+authors = ["@eshikafe"]
+description = "`bessd` is the core software switch. It carries packets between ports and modules"
+edition = "2021"
+
+[dependencies]
+bess-core = {path = "../bess-core", version = "0.1.0"}

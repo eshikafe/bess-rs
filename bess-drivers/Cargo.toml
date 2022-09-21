@@ -1,0 +1,16 @@
+[package]
+name = "bess-drivers"
+version = "0.1.0"
+authors = ["@eshikafe"]
+description = "Ports are places that packets may enter or exit bessd"
+edition = "2021"
+
+[dependencies]
+libc = "0.2"
+nix = {version = "0.24.2", features = ["user"]}
+
+#include <glog/logging.h>`
+log = "0.4.17"
+env_logger = "0.9.0"
+
+

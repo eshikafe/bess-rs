@@ -524,7 +524,7 @@
 //     except KeyboardInterrupt:
 //         sys.exit('\nInterrupted')
 
-fn main() {
+fn main()-> Result<(), Box<dyn std::error::Error>> {
     build_data::set_GIT_BRANCH();
     build_data::set_GIT_COMMIT();
     build_data::set_GIT_DIRTY();
@@ -532,4 +532,7 @@ fn main() {
     build_data::no_debug_rebuilds();
     build_data::set_RUSTC_VERSION();
     build_data::set_RUSTC_VERSION_SEMVER();
+
+    tonic_build::compile_protos("protobuf/service.proto")?;
+    Ok(())
 }
