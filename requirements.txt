@@ -1,4 +1,0 @@
-scapy
-flask
-grpcio
-protobuf
