@@ -12,3 +12,5 @@ pub mod worker;
 pub use opts::Options;
 pub use scheduler::Scheduler;
 pub use bessctl::*;
+
+pub use bess_rs::*;

@@ -1,4 +1,11 @@
-use tonic::{transport::Server, Request, Response, Status};
+use bess_rs::*;
+
+// pub mod bess_pb {
+  tonic::include_proto!("bess.pb");
+// }
+
+use bess_pb::bess_control_server::{BessControl, BessControlServer};
+use bess_pb::*;
 
 // gRPC server encapsulation. Usage:
 //   ApiServer server;
@@ -6,6 +13,8 @@ use tonic::{transport::Server, Request, Response, Status};
 //   server.Listen('127.0.0.1:888');
 //   server.run();
 
+
+#[derive(Debug, Default)]
 pub struct ApiServer;
 
 impl ApiServer {
@@ -17,13 +26,13 @@ impl ApiServer {
     // if (!builder_) {
     //   builder_ = new grpc::ServerBuilder();
     // }
-    Server::builder().add_service();
+    //Server::builder().add_service();
   
     info!("Server listening on {}",grpc_url);
   
     // self.builder.add_listening_port(grpc_url, grpc::InsecureServerCredentials());
   }
-  pub fn run(&self);
+  pub fn run(&self) {}
 }
 
 // class ApiServer {

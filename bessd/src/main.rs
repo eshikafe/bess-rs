@@ -5,7 +5,7 @@ fn main() {
   // FLAGS_logbuflevel = -1;
   // FLAGS_colorlogtostderr = true;
   // google::InitGoogleLogging(argv[0]);
-  // env_logger::init();
+  env_logger::init();
 
   // google::InstallFailureFunction(bess::debug::GoPanic);
   // debug::SetTrapHandler();

@@ -34,7 +34,7 @@ pub enum WorkerStatus {
 } 
 
 use crate::scheduler::Scheduler;
-use crate::packet_pool::PacketPool;
+// use crate::packet_pool::PacketPool;
 
 
 // class Task;
@@ -49,146 +49,146 @@ pub struct Worker {
   fd_event: u32,
 
   // bess::PacketPool *packet_pool_;
-  packet_pool: *PacketPool,
-  scheduler: *Scheduler,
+  // packet_pool: *PacketPool,
+  // scheduler: *Scheduler,
 
   // bess::Scheduler *scheduler_;
 
   silent_drops: u64, // packets that have been sent to a deadend
   current_tsc: u64,
   current_ns: u64,
-  rand: &Random,
+  // rand: &Random,
 }
 
 impl Worker {
-   /* ----------------------------------------------------------------------
-   * functions below are invoked by non-worker threads (the master)
-   * ---------------------------------------------------------------------- */
-   void SetNonWorker();
+  //  /* ----------------------------------------------------------------------
+  //  * functions below are invoked by non-worker threads (the master)
+  //  * ---------------------------------------------------------------------- */
+  //  void SetNonWorker();
 
-   /* ----------------------------------------------------------------------
-    * functions below are invoked by worker threads
-    * ---------------------------------------------------------------------- */
-   inline int is_pause_requested() { return status_ == WORKER_PAUSING; }
+  //  /* ----------------------------------------------------------------------
+  //   * functions below are invoked by worker threads
+  //   * ---------------------------------------------------------------------- */
+  //  inline int is_pause_requested() { return status_ == WORKER_PAUSING; }
  
-   /* Block myself. Return nonzero if the worker needs to die */
-   int BlockWorker();
+  //  /* Block myself. Return nonzero if the worker needs to die */
+  //  int BlockWorker();
  
-   /* The entry point of worker threads */
-   void *Run(void *_arg);
+  //  /* The entry point of worker threads */
+  //  void *Run(void *_arg);
  
-   worker_status_t status() { return status_; }
-   void set_status(worker_status_t status) { status_ = status; }
+  //  worker_status_t status() { return status_; }
+  //  void set_status(worker_status_t status) { status_ = status; }
  
-   int wid() { return wid_; }
-   int core() { return core_; }
-   int socket() { return socket_; }
-   int fd_event() { return fd_event_; }
+  //  int wid() { return wid_; }
+  //  int core() { return core_; }
+  //  int socket() { return socket_; }
+  //  int fd_event() { return fd_event_; }
  
-   bess::PacketPool *packet_pool() { return packet_pool_; }
+  //  bess::PacketPool *packet_pool() { return packet_pool_; }
  
-   bess::Scheduler *scheduler() { return scheduler_; }
+  //  bess::Scheduler *scheduler() { return scheduler_; }
  
-   uint64_t silent_drops() { return silent_drops_; }
-   void set_silent_drops(uint64_t drops) { silent_drops_ = drops; }
-   void incr_silent_drops(uint64_t drops) { silent_drops_ += drops; }
+  //  uint64_t silent_drops() { return silent_drops_; }
+  //  void set_silent_drops(uint64_t drops) { silent_drops_ = drops; }
+  //  void incr_silent_drops(uint64_t drops) { silent_drops_ += drops; }
  
-   uint64_t current_tsc() const { return current_tsc_; }
-   void set_current_tsc(uint64_t tsc) { current_tsc_ = tsc; }
+  //  uint64_t current_tsc() const { return current_tsc_; }
+  //  void set_current_tsc(uint64_t tsc) { current_tsc_ = tsc; }
  
-   uint64_t current_ns() const { return current_ns_; }
-   void set_current_ns(uint64_t ns) { current_ns_ = ns; }
+  //  uint64_t current_ns() const { return current_ns_; }
+  //  void set_current_ns(uint64_t ns) { current_ns_ = ns; }
  
-   Random *rand() const { return rand_; }
+  //  Random *rand() const { return rand_; }
 }
 // NOTE: Do not use "thread_local" here. It requires a function call every time
 // it is accessed. Use __thread instead, which incurs minimal runtime overhead.
 // For this, g++ requires Worker to have a trivial constructor and destructor.
-extern __thread Worker current_worker;
+// extern __thread Worker current_worker;
 
-// the following traits are not supported in g++ 4.x
-#if __GNUC__ >= 5
-static_assert(std::is_trivially_constructible<Worker>::value,
-              "not trivially constructible");
-static_assert(std::is_trivially_destructible<Worker>::value,
-              "not trivially destructible");
-#endif
+// // the following traits are not supported in g++ 4.x
+// #if __GNUC__ >= 5
+// static_assert(std::is_trivially_constructible<Worker>::value,
+//               "not trivially constructible");
+// static_assert(std::is_trivially_destructible<Worker>::value,
+//               "not trivially destructible");
+// #endif
 
-// TODO: C++-ify
+// // TODO: C++-ify
 
-extern int num_workers;
-extern std::thread worker_threads[Worker::kMaxWorkers];
-extern Worker *volatile workers[Worker::kMaxWorkers];
+// extern int num_workers;
+// extern std::thread worker_threads[Worker::kMaxWorkers];
+// extern Worker *volatile workers[Worker::kMaxWorkers];
 
-/* ------------------------------------------------------------------------
- * functions below are invoked by non-worker threads (the master)
- * ------------------------------------------------------------------------ */
-int is_worker_core(int cpu);
+// /* ------------------------------------------------------------------------
+//  * functions below are invoked by non-worker threads (the master)
+//  * ------------------------------------------------------------------------ */
+// int is_worker_core(int cpu);
 
-void pause_worker(int wid);
-void pause_all_workers();
+// void pause_worker(int wid);
+// void pause_all_workers();
 
-/*!
- * Attach orphan TCs to workers. Note this does not ensure optimal placement.
- */
-void attach_orphans();
-void resume_worker(int wid);
-void resume_all_workers();
-void destroy_worker(int wid);
-void destroy_all_workers();
+// /*!
+//  * Attach orphan TCs to workers. Note this does not ensure optimal placement.
+//  */
+// void attach_orphans();
+// void resume_worker(int wid);
+// void resume_all_workers();
+// void destroy_worker(int wid);
+// void destroy_all_workers();
 
-bool is_any_worker_running();
+// bool is_any_worker_running();
 
-int is_cpu_present(unsigned int core_id);
+// int is_cpu_present(unsigned int core_id);
 
-static inline int is_worker_active(int wid) {
-  return workers[wid] != nullptr;
-}
+// static inline int is_worker_active(int wid) {
+//   return workers[wid] != nullptr;
+// }
 
-inline bool is_worker_running(int wid) {
-  return workers[wid] && workers[wid]->status() == WORKER_RUNNING;
-}
+// inline bool is_worker_running(int wid) {
+//   return workers[wid] && workers[wid]->status() == WORKER_RUNNING;
+// }
 
-// arg (int) is the core id the worker should run on, and optionally the
-// scheduler to use.
-void launch_worker(int wid, int core, const std::string &scheduler = "");
+// // arg (int) is the core id the worker should run on, and optionally the
+// // scheduler to use.
+// void launch_worker(int wid, int core, const std::string &scheduler = "");
 
-Worker *get_next_active_worker();
+// Worker *get_next_active_worker();
 
-// Add 'c' to the list of orphan traffic classes.
-void add_tc_to_orphan(bess::TrafficClass *c, int wid);
+// // Add 'c' to the list of orphan traffic classes.
+// void add_tc_to_orphan(bess::TrafficClass *c, int wid);
 
-// Return true if 'c' was removed from the list of orphan traffic classes.
-// 'c' is now owned by the caller, and it must be attached to a tree or
-// destroyed.
-//
-// Otherwise, return false
-bool remove_tc_from_orphan(bess::TrafficClass *c);
+// // Return true if 'c' was removed from the list of orphan traffic classes.
+// // 'c' is now owned by the caller, and it must be attached to a tree or
+// // destroyed.
+// //
+// // Otherwise, return false
+// bool remove_tc_from_orphan(bess::TrafficClass *c);
 
-// Returns a list of all the orphan traffic classes.
-const std::list<std::pair<int, bess::TrafficClass *>> &list_orphan_tcs();
+// // Returns a list of all the orphan traffic classes.
+// const std::list<std::pair<int, bess::TrafficClass *>> &list_orphan_tcs();
 
-// Try to detach 'c' from a scheduler, or from the list of orhpan traffic
-// classes.
-//
-// Return true if successful. 'c' is now owned by the caller, and it must be
-// attached to a tree or destroyed.
-//
-// Otherwise, return false
-bool detach_tc(bess::TrafficClass *c);
+// // Try to detach 'c' from a scheduler, or from the list of orhpan traffic
+// // classes.
+// //
+// // Return true if successful. 'c' is now owned by the caller, and it must be
+// // attached to a tree or destroyed.
+// //
+// // Otherwise, return false
+// bool detach_tc(bess::TrafficClass *c);
 
-// This class is used as a resource manager to automatically pause workers if
-// running and then restarts workers if they were previously paused.
-class WorkerPauser {
- public:
-  explicit WorkerPauser();
-  ~WorkerPauser();
+// // This class is used as a resource manager to automatically pause workers if
+// // running and then restarts workers if they were previously paused.
+// class WorkerPauser {
+//  public:
+//   explicit WorkerPauser();
+//   ~WorkerPauser();
 
- private:
-  std::list<int> workers_paused_;
-};
+//  private:
+//   std::list<int> workers_paused_;
+// };
 
-#endif  // BESS_WORKER_H_
+// #endif  // BESS_WORKER_H_
 // ===========================================================================================
 
 
@@ -239,22 +239,22 @@ class WorkerPauser {
 //   Scheduler *scheduler;
 // };
 
-#define SYS_CPU_DIR "/sys/devices/system/cpu/cpu%u"
-#define CORE_ID_FILE "topology/core_id"
+// #define SYS_CPU_DIR "/sys/devices/system/cpu/cpu%u"
+// #define CORE_ID_FILE "topology/core_id"
 
 // Check if a cpu is present by the presence of the cpu information for it
-pub fn is_cpu_present(core_id: u32) -> bool {
-  char path[PATH_MAX];
-  int len = snprintf(path, sizeof(path), SYS_CPU_DIR "/" CORE_ID_FILE, core_id);
-  if (len <= 0 || (unsigned)len >= sizeof(path)) {
-    return false;
-  }
-  if (access(path, F_OK) != 0) {
-    return false;
-  }
+// pub fn is_cpu_present(core_id: u32) -> bool {
+//   char path[PATH_MAX];
+//   int len = snprintf(path, sizeof(path), SYS_CPU_DIR "/" CORE_ID_FILE, core_id);
+//   if (len <= 0 || (unsigned)len >= sizeof(path)) {
+//     return false;
+//   }
+//   if (access(path, F_OK) != 0) {
+//     return false;
+//   }
 
-  return true;
-}
+  // return true;
+// }
 
 // int is_worker_core(int cpu) {
 //   int wid;

@@ -1,8 +1,4 @@
 use bess_rs::*;
-use nix::unistd::*;
-use libc::{umask, S_IWGRP, S_IWOTH, exit, EXIT_FAILURE, EXIT_SUCCESS};
-
-
 use crate::debug;
 
 use crate::opts::*;

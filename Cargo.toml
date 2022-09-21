@@ -27,8 +27,9 @@ clap = {version = "3.2.12", features = ["derive"]}
 macaddr = "1.0.1"
 
 # #gRPC
-tonic = "0.7"
+tonic = "0.8.1"
 prost = "0.10"
+tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
 
 [build-dependencies]
 # time = "0.1"

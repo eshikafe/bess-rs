@@ -5,9 +5,9 @@
 // std::string DumpStack();
 
 use std::env;
-
-use libc::*;
-use nix::unistd;
+use bess_rs::*;
+// use libc::*;
+// use nix::unistd;
 
 // use log::*;
 // use clap::Parser;
@@ -426,7 +426,7 @@ pub fn set_trap_handler() {
   // libc::unlink is unsafe
   // unsafe {unlink(format!("{}{}", p_tmpdir, "/bessd_crash.log").as_ptr() as *const i8)};
 
-  sigact.sa_sigaction = trap_handler;
+  ?sigact.sa_sigaction = trap_handler;
   sigact.sa_flags = SA_RESTART | SA_SIGINFO;
 
   // for (i = 0; i < sizeof(signals) / sizeof(int); i++) {
@@ -493,19 +493,19 @@ pub fn dump_types() {
   // DumpType<max_align_t>();
 
   // BESS types
-  dump_type::<rte_mbuf>();
-  dump_type::<Packet>();
-  dump_type::<bess::PacketBatch>();
+  // dump_type::<rte_mbuf>();
+  // dump_type::<Packet>();
+  // dump_type::<bess::PacketBatch>();
 
-  dump_type::<Scheduler>();
-  dump_type::<TrafficClass>();
-  dump_type::<Task>();
+  // dump_type::<Scheduler>();
+  // dump_type::<TrafficClass>();
+  // dump_type::<Task>();
 
-  dump_type::<Module>();
-  dump_type::<bess::Gate>();
-  dump_type::<bess::IGate>();
-  dump_type::<bess::OGate>();
+  // dump_type::<Module>();
+  // dump_type::<bess::Gate>();
+  // dump_type::<bess::IGate>();
+  // dump_type::<bess::OGate>();
 
-  dump_type::<Worker>();
+  // dump_type::<Worker>();
   
 }
