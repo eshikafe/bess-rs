@@ -1,9 +1,0 @@
-[package]
-name = "bess-core"
-version = "0.1.0"
-authors = ["@eshikafe"]
-description = "BESS core crate"
-edition = "2021"
-
-[dependencies]
-bess-rs = {path = "..", version = "0.1.0"}

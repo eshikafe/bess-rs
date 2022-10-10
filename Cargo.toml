@@ -1,32 +1,26 @@
 [package]
 name = "bess-rs"
 version = "0.1.0"
-authors = ["@eshikafe"]
 description = "BESS implementation in Rust"
 edition = "2021"
 
 [workspace]
 members = [
     "bessctl",
-    "bessd",
-    "bess-core",
-    "bess-drivers",
-    "bess-modules"
 ]
+
+[[bin]]
+name = "bessd"
+path = "src/bin/bessd.rs"
 
 [dependencies]
 libc = "0.2"
 nix = {version = "0.24.2", features = ["user"]}
-
-# #include <glog/logging.h>`
+exitcode = "1.1.2"
 log = "0.4.17"
 env_logger = "0.9.0"
-
-# #include <gflags/gflags.h>`
 clap = {version = "3.2.12", features = ["derive"]}
 macaddr = "1.0.1"
-
-# #gRPC
 tonic = "0.8.1"
 prost = "0.10"
 tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
