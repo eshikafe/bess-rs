@@ -1,4 +1,3 @@
-
 // #include <iostream>
 // #include <sstream>
 // #include <string>
@@ -12,9 +11,9 @@ use crate::core::traffic_class;
 // namespace bess {
 
 struct SchedStats {
-  usage: [u64; 4],
-  cnt_idle: u64,
-  cycles_idle: u64,
+    usage: [u64; 4],
+    cnt_idle: u64,
+    cycles_idle: u64,
 }
 
 struct SchedWakeupQueue;
@@ -50,12 +49,12 @@ struct SchedWakeupQueue;
 // The non-instantiable base class for schedulers.  Implements common routines
 // needed for scheduling.
 pub struct Scheduler {
-  // root: *TrafficClass,
-  // default_rr_class: *RoundRobinTrafficClass,
-  wakeup_queue: SchedWakeupQueue,
-  stats: SchedStats,
-  checkpoint: u64,
-  ns_per_cycle: f64,
+    // root: *TrafficClass,
+    // default_rr_class: *RoundRobinTrafficClass,
+    wakeup_queue: SchedWakeupQueue,
+    stats: SchedStats,
+    checkpoint: u64,
+    ns_per_cycle: f64,
 }
 
 impl Scheduler {}
@@ -179,8 +178,6 @@ impl Scheduler {}
 //   // Starts at the given class and attempts to unblock classes on the path
 //   // towards the root.
 //   void UnblockTowardsRoot(TrafficClass *c, uint64_t tsc);
-
-
 
 //  private:
 //   DISALLOW_COPY_AND_ASSIGN(Scheduler);

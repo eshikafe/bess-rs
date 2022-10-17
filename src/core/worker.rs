@@ -1,4 +1,3 @@
-
 // #include <glog/logging.h>
 
 // #include <cstdint>
@@ -25,81 +24,78 @@ const MAX_GATES: u32 = 8192;
 //  *  worker n-1                  n-1      1 specified core
 //  *  master          RTE_MAX_LCORE-1      all other cores that are allowed
 //  */
-
 pub enum WorkerStatus {
-  WorkerPausing, // transient state for blocking or quitting
-  WorkerPaused,
-  WorkerRunning,
-  WorkerFinished,
-} 
+    WorkerPausing, // transient state for blocking or quitting
+    WorkerPaused,
+    WorkerRunning,
+    WorkerFinished,
+}
 
 use crate::core::scheduler::Scheduler;
 // use crate::packet_pool::PacketPool;
 
-
 // class Task;
 const kMaxWorkers: u32 = 64;
-const kAnyWorker: i32 = -1;  // unspecified worker ID
+const kAnyWorker: i32 = -1; // unspecified worker ID
 
 pub struct Worker {
-  status: WorkerStatus,
-  wid: u32,   // always [0, kMaxWorkers - 1]
-  core: u32,  // TODO: should be cpuset_t
-  socket: u32,
-  fd_event: u32,
+    status: WorkerStatus,
+    wid: u32,  // always [0, kMaxWorkers - 1]
+    core: u32, // TODO: should be cpuset_t
+    socket: u32,
+    fd_event: u32,
 
-  // bess::PacketPool *packet_pool_;
-  // packet_pool: *PacketPool,
-  // scheduler: *Scheduler,
+    // bess::PacketPool *packet_pool_;
+    // packet_pool: *PacketPool,
+    // scheduler: *Scheduler,
 
-  // bess::Scheduler *scheduler_;
-
-  silent_drops: u64, // packets that have been sent to a deadend
-  current_tsc: u64,
-  current_ns: u64,
-  // rand: &Random,
+    // bess::Scheduler *scheduler_;
+    silent_drops: u64, // packets that have been sent to a deadend
+    current_tsc: u64,
+    current_ns: u64,
+    // rand: &Random,
 }
 
 impl Worker {
-  //  /* ----------------------------------------------------------------------
-  //  * functions below are invoked by non-worker threads (the master)
-  //  * ---------------------------------------------------------------------- */
-  //  void SetNonWorker();
+    //  /* ----------------------------------------------------------------------
+    //  * functions below are invoked by non-worker threads (the master)
+    //  * ---------------------------------------------------------------------- */
+    //  void SetNonWorker();
 
-  //  /* ----------------------------------------------------------------------
-  //   * functions below are invoked by worker threads
-  //   * ---------------------------------------------------------------------- */
-  //  inline int is_pause_requested() { return status_ == WORKER_PAUSING; }
- 
-  //  /* Block myself. Return nonzero if the worker needs to die */
-  //  int BlockWorker();
- 
-  //  /* The entry point of worker threads */
-  //  void *Run(void *_arg);
- 
-  //  worker_status_t status() { return status_; }
-  //  void set_status(worker_status_t status) { status_ = status; }
- 
-  //  int wid() { return wid_; }
-  //  int core() { return core_; }
-  //  int socket() { return socket_; }
-  //  int fd_event() { return fd_event_; }
- 
-  //  bess::PacketPool *packet_pool() { return packet_pool_; }
- 
-  //  bess::Scheduler *scheduler() { return scheduler_; }
- 
-  //  uint64_t silent_drops() { return silent_drops_; }
-  //  void set_silent_drops(uint64_t drops) { silent_drops_ = drops; }
-  //  void incr_silent_drops(uint64_t drops) { silent_drops_ += drops; }
- 
-  //  uint64_t current_tsc() const { return current_tsc_; }
-  //  void set_current_tsc(uint64_t tsc) { current_tsc_ = tsc; }
- 
-  //  uint64_t current_ns() const { return current_ns_; }
-  //  void set_current_ns(uint64_t ns) { current_ns_ = ns; }
- 
-  //  Random *rand() const { return rand_; }
+    //  /* ----------------------------------------------------------------------
+    //   * functions below are invoked by worker threads
+    //   * ---------------------------------------------------------------------- */
+    //  inline int is_pause_requested() { return status_ == WORKER_PAUSING; }
+
+    //  /* Block myself. Return nonzero if the worker needs to die */
+    //  int BlockWorker();
+
+    //  /* The entry point of worker threads */
+    //  void *Run(void *_arg);
+
+    //  worker_status_t status() { return status_; }
+    //  void set_status(worker_status_t status) { status_ = status; }
+
+    //  int wid() { return wid_; }
+    //  int core() { return core_; }
+    //  int socket() { return socket_; }
+    //  int fd_event() { return fd_event_; }
+
+    //  bess::PacketPool *packet_pool() { return packet_pool_; }
+
+    //  bess::Scheduler *scheduler() { return scheduler_; }
+
+    //  uint64_t silent_drops() { return silent_drops_; }
+    //  void set_silent_drops(uint64_t drops) { silent_drops_ = drops; }
+    //  void incr_silent_drops(uint64_t drops) { silent_drops_ += drops; }
+
+    //  uint64_t current_tsc() const { return current_tsc_; }
+    //  void set_current_tsc(uint64_t tsc) { current_tsc_ = tsc; }
+
+    //  uint64_t current_ns() const { return current_ns_; }
+    //  void set_current_ns(uint64_t ns) { current_ns_ = ns; }
+
+    //  Random *rand() const { return rand_; }
 }
 // NOTE: Do not use "thread_local" here. It requires a function call every time
 // it is accessed. Use __thread instead, which incurs minimal runtime overhead.
@@ -191,7 +187,6 @@ impl Worker {
 // #endif  // BESS_WORKER_H_
 // ===========================================================================================
 
-
 // #include <sched.h>
 // #include <sys/eventfd.h>
 // #include <unistd.h>
@@ -253,7 +248,7 @@ impl Worker {
 //     return false;
 //   }
 
-  // return true;
+// return true;
 // }
 
 // int is_worker_core(int cpu) {
@@ -353,7 +348,6 @@ impl Worker {
 
 //     while (workers[wid]->status() == WORKER_PAUSED) {
 //     } /* spin */
-
 //     workers[wid] = nullptr;
 
 //     num_workers--;

@@ -48,16 +48,21 @@
 // #include <string>
 // #include <tuple>
 
-// #include "debug.h"
-use crate::core::opts::*;
-use crate::core::debug;
-use std::process::exit;
-use exitcode;
-use clap::Parser;
-use log::*;
 
-use nix::*;
+// #include "debug.h"
+use crate::core::debug;
+use crate::core::opts::*;
+use clap::Parser;
+use exitcode;
+use log::*;
+use env_logger::{Builder, WriteStyle, Target};
+use std::io::Write;
+use chrono;
+use env_logger::fmt::Color;
+use std::process::exit;
+
 use libc::*;
+use nix::*;
 // #include "port.h"
 
 // How log messages are processed in BESS?
@@ -150,89 +155,104 @@ pub const K_INHERITANCE_LIMIT: u32 = 10;
 pub fn process_command_line_args() {
     let flags = Options::parse();
     if flags.t {
-      debug::dump_types();
-      exit(exitcode::OK);
-    //   unsafe {exit(EXIT_SUCCESS)};
+        debug::dump_types();
+        exit(exitcode::OK);
+        //   unsafe {exit(EXIT_SUCCESS)};
     }
-  
+
     if flags.f {
-      // google::LogToStderr();
-      env_logger::init();
+        // google::LogToStderr();
+        env_logger::Builder::new()
+        .format(|buf, record| {
+            writeln!(
+                buf,
+                "[{} {} {}:{}] [{}] - {}",
+                chrono::Local::now().format("%Y-%m-%dT%H:%M:%S"),
+                record.target(),
+                record.file().unwrap(),
+                record.line().unwrap(),
+                record.level(),
+                record.args()
+            )
+        })
+        .write_style(WriteStyle::Always )
+        .target(Target::Stderr)
+        .init();
     }
-  }
-  
-  // Checks that we are running as superuser.
-  pub fn check_running_as_root() {
+}
+
+// Checks that we are running as superuser.
+pub fn check_running_as_root() {
     let flag = Options::parse();
     if !flag.skip_root_check {
         let euid = unistd::geteuid();
         if !unistd::Uid::is_root(euid) {
-          error!("You need root privilege to run the BESS daemon");
-          exit(exitcode::TEMPFAIL);
+            error!("You need root privilege to run the BESS daemon");
+            exit(exitcode::TEMPFAIL);
         }
-      }
-      // Great power comes with great responsibility.
-      unsafe {umask(S_IWGRP | S_IWOTH)};
-  }
-  
-  // Write the pid value to the given file fd.  Overwrites anything present at
-  // that fd.  Dies if unable to overwrite the file.
-  pub fn write_pid_file(fd: u32, pid: u32) {}
-  
-  // Read the pid value from the given file fd.  Returns true and the read pid
-  // value upon success.  Returns false upon failure.
-  pub fn read_pid_file(fd: u32) -> (bool, u32) {
+    }
+    // Great power comes with great responsibility.
+    unsafe { umask(S_IWGRP | S_IWOTH) };
+}
+
+// Write the pid value to the given file fd.  Overwrites anything present at
+// that fd.  Dies if unable to overwrite the file.
+pub fn write_pid_file(fd: u32, pid: u32) {}
+
+// Read the pid value from the given file fd.  Returns true and the read pid
+// value upon success.  Returns false upon failure.
+pub fn read_pid_file(fd: u32) -> (bool, u32) {
     (false, 0)
-  }
-  
-  // Tries to acquire the daemon pidfile lock for the file open at the given fd.
-  // Dies if an error occurs when trying to acquire the lock.  Returns a pair
-  // <lockheld, pid> where lockheld is a bool indicating if the lock is held and
-  // pid is a pid_t that is non-zero if lockheld is true indicating the process
-  // holding the lock.
-  pub fn try_acquire_pid_file_lock(fd: u32) -> (bool, u32) {
+}
+
+// Tries to acquire the daemon pidfile lock for the file open at the given fd.
+// Dies if an error occurs when trying to acquire the lock.  Returns a pair
+// <lockheld, pid> where lockheld is a bool indicating if the lock is held and
+// pid is a pid_t that is non-zero if lockheld is true indicating the process
+// holding the lock.
+pub fn try_acquire_pid_file_lock(fd: u32) -> (bool, u32) {
     (false, 0)
-  }
-  
-  // Ensures that we are a unique instance.
-  // Returns the (locked) file descriptor of pidfile_path.
-  pub fn check_unique_instance(pidfile_path: &str) -> u32 {
+}
+
+// Ensures that we are a unique instance.
+// Returns the (locked) file descriptor of pidfile_path.
+pub fn check_unique_instance(pidfile_path: &str) -> u32 {
     0
-  }
-  
-  // Starts BESS as a daemon running in the background.
-  pub fn daemonize()-> i32 {
+}
+
+// Starts BESS as a daemon running in the background.
+pub fn daemonize() -> i32 {
     0
-  }
-  
-  // Sets BESS's resource limit.  Returns true upon success.
-  pub fn set_resource_limit() -> bool {
-    false
-  }
-  
-  // Load an indiviual plugin specified by path. Return true upon success.
-  pub fn load_plugin(path: &str) -> bool {
-    false
-  }
-  
-  // Unload a loaded plugin specified by path. Return true upon success.
-  pub fn unload_plugin(path: &str) -> bool {
-    false
-  }
-  
-  // Load all the .so files in the specified directory. Return true upon success.
-  pub fn load_plugins(directory: &str) -> bool {
-    false
-  }
-  
-  // List all imported .so files.
-  pub fn list_plugins() -> Vec<String> {
+}
+
+// Sets BESS's resource limit.  Returns true upon success.
+pub fn set_resource_limit() -> bool {
+    true
+}
+
+// Load an indiviual plugin specified by path. Return true upon success.
+pub fn load_plugin(path: String) -> bool {
+    true
+}
+
+// Unload a loaded plugin specified by path. Return true upon success.
+pub fn unload_plugin(path: &str) -> bool {
+    true
+}
+
+// Load all the .so files in the specified directory. Return true upon success.
+pub fn load_plugins(directory: &str) -> bool {
+    true
+}
+
+// List all imported .so files.
+pub fn list_plugins() -> Vec<String> {
     vec!["".to_string()]
-  }
-  
-  // Return the current executable's own directory. For example, if the location
-  // of the executable is /opt/bess/core/bessd, returns /opt/bess/core/ (with the
-  // slash at the end).
-  pub fn get_current_directory() -> String {
+}
+
+// Return the current executable's own directory. For example, if the location
+// of the executable is /opt/bess/core/bessd, returns /opt/bess/core/ (with the
+// slash at the end).
+pub fn get_current_directory() -> String {
     "".to_string()
-  }
+}

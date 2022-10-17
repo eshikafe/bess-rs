@@ -1,6 +1,5 @@
 // ==================
 
-
 // #include "task.h"
 // #include "utils/common.h"
 // #include "utils/extended_priority_queue.h"
@@ -20,11 +19,11 @@ const QUANTUM: u32 = 1 << 10;
 
 // Resource types that can be accounted for.
 pub enum Resource {
-  RESOURCE_COUNT = 0,  // Count of how many times scheduled
-  RESOURCE_CYCLE,      // CPU cycles
-  RESOURCE_PACKET,     // Packets set
-  RESOURCE_BIT,        // Bits sent
-  NUM_RESOURCES,       // Sentinel. Also used to indicate "no resource".
+    RESOURCE_COUNT = 0, // Count of how many times scheduled
+    RESOURCE_CYCLE,     // CPU cycles
+    RESOURCE_PACKET,    // Packets set
+    RESOURCE_BIT,       // Bits sent
+    NUM_RESOURCES,      // Sentinel. Also used to indicate "no resource".
 }
 
 // An array of counters for all resource types.
@@ -37,8 +36,8 @@ pub enum Resource {
 // typedef int32_t resource_share_t;
 
 struct TcStats {
-  usage: [u64; 4],
-  cnt_throttled: u64,
+    usage: [u64; 4],
+    cnt_throttled: u64,
 }
 
 // class Scheduler;
@@ -52,38 +51,42 @@ struct TcStats {
 // class TrafficClass;
 
 enum TrafficPolicy {
-  POLICY_PRIORITY = 0,
-  POLICY_WEIGHTED_FAIR,
-  POLICY_ROUND_ROBIN,
-  POLICY_RATE_LIMIT,
-  POLICY_LEAF,
-  NUM_POLICIES,  // sentinel
+    POLICY_PRIORITY = 0,
+    POLICY_WEIGHTED_FAIR,
+    POLICY_ROUND_ROBIN,
+    POLICY_RATE_LIMIT,
+    POLICY_LEAF,
+    NUM_POLICIES, // sentinel
 }
 
 mod traffic_class_initializer_types {
-enum PriorityFakeType {
-  PRIORITY = 0,
-}
+    enum PriorityFakeType {
+        PRIORITY = 0,
+    }
 
-enum WeightedFairFakeType {
-  WEIGHTED_FAIR = 0,
+    enum WeightedFairFakeType {
+        WEIGHTED_FAIR = 0,
+    }
+    enum RoundRobinFakeType {
+        ROUND_ROBIN = 0,
+    }
+    enum RateLimitFakeType {
+        RATE_LIMIT = 0,
+    }
+    enum LeafFakeType {
+        LEAF = 0,
+    }
 }
-enum RoundRobinFakeType {
-  ROUND_ROBIN = 0,
-}
-enum RateLimitFakeType {
-  RATE_LIMIT = 0,
-}
-enum LeafFakeType {
-  LEAF = 0,
-}
-
-}  
 
 use traffic_class_initializer_types::*;
 
 const TrafficPolicyName: [&str; TrafficPolicy::NUM_POLICIES as usize] = [
-    "priority", "weighted_fair", "round_robin", "rate_limit", "leaf"];
+    "priority",
+    "weighted_fair",
+    "round_robin",
+    "rate_limit",
+    "leaf",
+];
 
 // const std::unordered_map<std::string, enum resource_t> ResourceMap = {
 //     {"count", RESOURCE_COUNT},
@@ -126,124 +129,125 @@ const TrafficPolicyName: [&str; TrafficPolicy::NUM_POLICIES as usize] = [
 // A TrafficClass represents a hierarchy of TrafficClasses which contain
 // schedulable task units.
 pub struct TrafficClass {
-  // Parent of this class; nullptr for root.
-  parent: Box<TrafficClass>,
+    // Parent of this class; nullptr for root.
+    parent: Box<TrafficClass>,
 
-  // The name given to this class.
-  name: String,
-  stats: TcStats,
+    // The name given to this class.
+    name: String,
+    stats: TcStats,
 
-  // The tsc time that this should be woken up by the scheduler.
-  wakeup_time: u64,
+    // The tsc time that this should be woken up by the scheduler.
+    wakeup_time: u64,
 
-  // private:
-  // friend class Scheduler;
-  // friend class DefaultScheduler;
-  // friend class ExperimentalScheduler;
-
-  blocked: bool,
-  policy: TrafficPolicy,
+    // private:
+    // friend class Scheduler;
+    // friend class DefaultScheduler;
+    // friend class ExperimentalScheduler;
+    blocked: bool,
+    policy: TrafficPolicy,
 }
 
 impl TrafficClass {
-//   TrafficClass(const std::string &name, const TrafficPolicy &policy,
-//     bool blocked = true)
-// : parent_(),
-// name_(name),
-// stats_(),
-// wakeup_time_(),
-// blocked_(blocked),
-// policy_(policy) {}
+    //   TrafficClass(const std::string &name, const TrafficPolicy &policy,
+    //     bool blocked = true)
+    // : parent_(),
+    // name_(name),
+    // stats_(),
+    // wakeup_time_(),
+    // blocked_(blocked),
+    // policy_(policy) {}
 
-  // pub fn new(name: String, policy: TrafficPolicy, blocked: bool) -> TrafficClass {
-  //   TrafficClass { parent: Self, name: name, stats: (), wakeup_time: (), blocked: true, policy: policy }
+    // pub fn new(name: String, policy: TrafficPolicy, blocked: bool) -> TrafficClass {
+    //   TrafficClass { parent: Self, name: name, stats: (), wakeup_time: (), blocked: true, policy: policy }
 
-  // }
+    // }
 
-  // Returns the number of TCs in the TC subtree rooted at this, including
-  // this TC.
-  pub fn size() -> usize {0}
+    // Returns the number of TCs in the TC subtree rooted at this, including
+    // this TC.
+    pub fn size() -> usize {
+        0
+    }
 
-  // use Traits
-//   virtual std::vector<TrafficClass *> Children() const = 0;
+    // use Traits
+    //   virtual std::vector<TrafficClass *> Children() const = 0;
 
-//   // Returns the root of the tree this class belongs to.
-//   // Expensive in that it is recursive, so do not call from
-//   // performance-sensitive code.
-//   const TrafficClass *Root() const { return parent_ ? parent_->Root() : this; }
-//   TrafficClass *Root() { return parent_ ? parent_->Root() : this; }
+    //   // Returns the root of the tree this class belongs to.
+    //   // Expensive in that it is recursive, so do not call from
+    //   // performance-sensitive code.
+    //   const TrafficClass *Root() const { return parent_ ? parent_->Root() : this; }
+    //   TrafficClass *Root() { return parent_ ? parent_->Root() : this; }
 
-//   // Returns its worker ID, or -1 (kAnyWorker) if not belongs to any worker yet
-//   int WorkerId() const;
+    //   // Returns its worker ID, or -1 (kAnyWorker) if not belongs to any worker yet
+    //   int WorkerId() const;
 
-//   // Returns true if 'child' was removed successfully, in which case
-//   // the caller owns it. Therefore, after a successful call, 'child'
-//   // must be destroyed or attached to another tree.
-//   virtual bool RemoveChild(TrafficClass *child) = 0;
+    //   // Returns true if 'child' was removed successfully, in which case
+    //   // the caller owns it. Therefore, after a successful call, 'child'
+    //   // must be destroyed or attached to another tree.
+    //   virtual bool RemoveChild(TrafficClass *child) = 0;
 
-//   // Starts from the current node and accounts for the usage of the given child
-//   // after execution and finishes any data structure reorganization required
-//   // after execution has finished.
-//   virtual void FinishAndAccountTowardsRoot(SchedWakeupQueue *wakeup_queue,
-//                                            TrafficClass *child,
-//                                            resource_arr_t usage,
-//                                            uint64_t tsc) = 0;
+    //   // Starts from the current node and accounts for the usage of the given child
+    //   // after execution and finishes any data structure reorganization required
+    //   // after execution has finished.
+    //   virtual void FinishAndAccountTowardsRoot(SchedWakeupQueue *wakeup_queue,
+    //                                            TrafficClass *child,
+    //                                            resource_arr_t usage,
+    //                                            uint64_t tsc) = 0;
 
-//   TrafficClass *parent() const { return parent_; }
+    //   TrafficClass *parent() const { return parent_; }
 
-//   const std::string &name() const { return name_; }
+    //   const std::string &name() const { return name_; }
 
-//   const struct tc_stats &stats() const { return stats_; }
+    //   const struct tc_stats &stats() const { return stats_; }
 
-//   uint64_t wakeup_time() const { return wakeup_time_; }
+    //   uint64_t wakeup_time() const { return wakeup_time_; }
 
-//   bool blocked() const { return blocked_; }
+    //   bool blocked() const { return blocked_; }
 
-//   TrafficPolicy policy() const { return policy_; }
+    //   TrafficPolicy policy() const { return policy_; }
 
-//  protected:
-//   friend PriorityTrafficClass;
-//   friend WeightedFairTrafficClass;
-//   friend RoundRobinTrafficClass;
-//   friend RateLimitTrafficClass;
-//   friend class LeafTrafficClass;
+    //  protected:
+    //   friend PriorityTrafficClass;
+    //   friend WeightedFairTrafficClass;
+    //   friend RoundRobinTrafficClass;
+    //   friend RateLimitTrafficClass;
+    //   friend class LeafTrafficClass;
 
-//   // Sets blocked status to nowblocked and recurses towards root by signaling
-//   // the parent if status became unblocked.
-//   void UnblockTowardsRootSetBlocked(uint64_t tsc, bool nowblocked) {
-//     bool became_unblocked = !nowblocked && blocked_;
-//     blocked_ = nowblocked;
+    //   // Sets blocked status to nowblocked and recurses towards root by signaling
+    //   // the parent if status became unblocked.
+    //   void UnblockTowardsRootSetBlocked(uint64_t tsc, bool nowblocked) {
+    //     bool became_unblocked = !nowblocked && blocked_;
+    //     blocked_ = nowblocked;
 
-//     if (!parent_ || !became_unblocked) {
-//       return;
-//     }
+    //     if (!parent_ || !became_unblocked) {
+    //       return;
+    //     }
 
-//     parent_->UnblockTowardsRoot(tsc);
-//   }
+    //     parent_->UnblockTowardsRoot(tsc);
+    //   }
 
-//   // Sets blocked status to nowblocked and recurses towards root by signaling
-//   // the parent if status became blocked.
-//   void BlockTowardsRootSetBlocked(bool nowblocked) {
-//     bool became_blocked = nowblocked && !blocked_;
-//     blocked_ = nowblocked;
+    //   // Sets blocked status to nowblocked and recurses towards root by signaling
+    //   // the parent if status became blocked.
+    //   void BlockTowardsRootSetBlocked(bool nowblocked) {
+    //     bool became_blocked = nowblocked && !blocked_;
+    //     blocked_ = nowblocked;
 
-//     if (!parent_ || !became_blocked) {
-//       return;
-//     }
+    //     if (!parent_ || !became_blocked) {
+    //       return;
+    //     }
 
-//     parent_->BlockTowardsRoot();
-//   }
+    //     parent_->BlockTowardsRoot();
+    //   }
 
-//   // Returns the next schedulable child of this traffic class.
-//   virtual TrafficClass *PickNextChild() = 0;
+    //   // Returns the next schedulable child of this traffic class.
+    //   virtual TrafficClass *PickNextChild() = 0;
 
-//   // Starts from the current node and attempts to recursively unblock (if
-//   // eligible) all nodes from this node to the root.
-//   virtual void UnblockTowardsRoot(uint64_t tsc) = 0;
+    //   // Starts from the current node and attempts to recursively unblock (if
+    //   // eligible) all nodes from this node to the root.
+    //   virtual void UnblockTowardsRoot(uint64_t tsc) = 0;
 
-//   // Starts from the current node and attempts to recursively block (if
-//   // eligible) all nodes from this node to the root.
-//   virtual void BlockTowardsRoot() = 0;
+    //   // Starts from the current node and attempts to recursively block (if
+    //   // eligible) all nodes from this node to the root.
+    //   virtual void BlockTowardsRoot() = 0;
 }
 
 // class TrafficClass {
@@ -363,7 +367,7 @@ impl TrafficClass {
 
 //   const TrafficPolicy policy_;
 
-  // DISALLOW_COPY_AND_ASSIGN(TrafficClass);
+// DISALLOW_COPY_AND_ASSIGN(TrafficClass);
 // };
 
 // class PriorityTrafficClass final : public TrafficClass {
@@ -861,8 +865,6 @@ impl TrafficClass {
 // }  // namespace bess
 
 // #endif  // BESS_TRAFFIC_CLASS_H_
-
-
 
 // // ======================
 

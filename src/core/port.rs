@@ -1,4 +1,3 @@
-
 // #include <glog/logging.h>
 // #include <google/protobuf/any.pb.h>
 // #include <gtest/gtest_prod.h>
@@ -25,10 +24,10 @@ const ETH_ALEN: u8 = 6;
 // Instead, we use the "incoming/outgoing" convention:
 // - incoming: outside -> BESS
 // - outgoing: BESS -> outside
-pub enum PacketDirection{
-  Incoming,
-  Outgoing,
-  Dirs,
+pub enum PacketDirection {
+    Incoming,
+    Outgoing,
+    Dirs,
 }
 
 // struct Port;
@@ -147,33 +146,31 @@ pub enum PacketDirection{
 //   }
 // };
 
-
-
 struct QueueStats {
-  packets: u64,
-  dropped: u64,  // Not all drivers support this for INC direction
-  bytes: u64,    // It doesn't include Ethernet overhead
-  // requested_hist: BatchHistogram,
-  // actual_hist: BatchHistogram,
-  // diff_hist: BatchHistogram,
+    packets: u64,
+    dropped: u64, // Not all drivers support this for INC direction
+    bytes: u64,   // It doesn't include Ethernet overhead
+                  // requested_hist: BatchHistogram,
+                  // actual_hist: BatchHistogram,
+                  // diff_hist: BatchHistogram,
 }
 
 struct LinkStatus {
-  speed: u32,    // speed in mbps: 1000, 40000, etc. 0 for vports
-  full_duplex: bool,  // full-duplex enabled?
-  autoneg: bool,      // auto-negotiated speed and duplex?
-  link_up: bool,      // link up?
+    speed: u32,        // speed in mbps: 1000, 40000, etc. 0 for vports
+    full_duplex: bool, // full-duplex enabled?
+    autoneg: bool,     // auto-negotiated speed and duplex?
+    link_up: bool,     // link up?
 }
 
 struct Conf {
-  mac_addr: macaddr::MacAddr, //bess::utils::Ethernet::Address,
-  mtu: u32,
-  admin_up: bool,
+    mac_addr: macaddr::MacAddr, //bess::utils::Ethernet::Address,
+    mtu: u32,
+    admin_up: bool,
 }
 
 struct PortStats {
-  inc: QueueStats,
-  out: QueueStats,
+    inc: QueueStats,
+    out: QueueStats,
 }
 
 // pub struct Port {
@@ -181,7 +178,7 @@ struct PortStats {
 //   pub conf: Conf,
 //   pub port_stats: PortStats,
 
-  // overide this section to create a new driver -----------------------------
+// overide this section to create a new driver -----------------------------
 //   Port()
 //       : port_stats_(),
 //         conf_(),
@@ -306,7 +303,6 @@ struct PortStats {
 //       _NAME_TEMPLATE, _HELP, PORT_INIT_FUNC(&_DRIVER::Init));
 
 // #endif  // BESS_PORT_H_
-
 
 // #include <glog/logging.h>
 

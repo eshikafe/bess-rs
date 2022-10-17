@@ -1,2 +1,5 @@
 /target
 /Cargo.lock
+.pyc
+/pybess/__pycache__
+/bessctl/__pycache__

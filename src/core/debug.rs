@@ -1,12 +1,11 @@
-
 // fn SetTrapHandler();
 // [[noreturn]] void GoPanic(void);
 // void DumpTypes(void); => implemented
 // std::string DumpStack();
 
-use std::{env, mem, any::type_name};
 use libc::*;
 use nix::unistd;
+use std::{any::type_name, env, mem};
 
 // use log::*;
 // use clap::Parser;
@@ -21,7 +20,6 @@ use nix::unistd;
 // #include "traffic_class.h"
 // #include "opts.h"
 // #include "utils/format.h" => println!
-
 
 // using bess::utils::Parse;
 // static dir = env::temp_dir();
@@ -410,32 +408,32 @@ use nix::unistd;
 // }
 
 pub fn set_trap_handler() {
-  let signals: [c_int; 6] =[
-      SIGSEGV, SIGBUS, SIGILL, SIGFPE, SIGABRT,
-      // SIGUSR1 is special in that it is triggered by user and does not abort
-      SIGUSR1,
-  ];
+    let signals: [c_int; 6] = [
+        SIGSEGV, SIGBUS, SIGILL, SIGFPE, SIGABRT,
+        // SIGUSR1 is special in that it is triggered by user and does not abort
+        SIGUSR1,
+    ];
 
-  let ignored_signals: [c_int; 1] = [ SIGPIPE ];
+    let ignored_signals: [c_int; 1] = [SIGPIPE];
 
-  let sigact: sigaction;
-  let i: usize = 0;
-  let p_tmpdir = env::temp_dir();
-  unistd::unlink(format!("{}{}", p_tmpdir.display(), "/bessd_crash.log").as_str());
-  // libc::unlink is unsafe
-  // unsafe {unlink(format!("{}{}", p_tmpdir, "/bessd_crash.log").as_ptr() as *const i8)};
+    let sigact: sigaction;
+    let i: usize = 0;
+    let p_tmpdir = env::temp_dir();
+    unistd::unlink(format!("{}{}", p_tmpdir.display(), "/bessd_crash.log").as_str());
+    // libc::unlink is unsafe
+    // unsafe {unlink(format!("{}{}", p_tmpdir, "/bessd_crash.log").as_ptr() as *const i8)};
 
-  // sigact.sa_sigaction = trap_handler;
-  // sigact.sa_flags = SA_RESTART | SA_SIGINFO;
+    // sigact.sa_sigaction = trap_handler;
+    // sigact.sa_flags = SA_RESTART | SA_SIGINFO;
 
-  // for (i = 0; i < sizeof(signals) / sizeof(int); i++) {
-  //   int ret = sigaction(signals[i], &sigact, nullptr);
-  //   DCHECK_NE(ret, 1);
-  // }
+    // for (i = 0; i < sizeof(signals) / sizeof(int); i++) {
+    //   int ret = sigaction(signals[i], &sigact, nullptr);
+    //   DCHECK_NE(ret, 1);
+    // }
 
-  // for (i = 0; i < sizeof(ignored_signals) / sizeof(int); i++) {
-  //   signal(ignored_signals[i], SIG_IGN);
-  // }
+    // for (i = 0; i < sizeof(ignored_signals) / sizeof(int); i++) {
+    //   signal(ignored_signals[i], SIG_IGN);
+    // }
 }
 
 // template <typename T>
@@ -457,54 +455,58 @@ pub fn set_trap_handler() {
 //             << std::endl;
 // }
 fn dump_type<T: 'static>() {
-  // Format("%-24s %8zu %8zu", type_name.c_str(), sizeof(T), alignof(T))
-  println!("{:<24}{:>8}{:>8}",type_name::<T>().to_string(), mem::size_of::<T>(), mem::align_of::<T>());
+    // Format("%-24s %8zu %8zu", type_name.c_str(), sizeof(T), alignof(T))
+    println!(
+        "{:<24}{:>8}{:>8}",
+        type_name::<T>().to_string(),
+        mem::size_of::<T>(),
+        mem::align_of::<T>()
+    );
 }
 
 // TODO: Replace with DPDK crate
 fn rte_version() -> String {
-  String::from("DPDK 17.02.0-rc0")
+    String::from("DPDK 17.02.0-rc0")
 }
 
 pub fn dump_types() {
-  println!("bessd {}",option_env!("CARGO_PKG_VERSION").unwrap());
-  println!("Compiler {}", env!("RUSTC_VERSION"));
-  println!("{}",rte_version());
+    println!("bessd {}", option_env!("CARGO_PKG_VERSION").unwrap());
+    println!("Compiler {}", env!("RUSTC_VERSION"));
+    println!("{}", rte_version());
 
-  // std::cout << Format("%-24s %8s %8s", "", "sizeof", "alignof") << std::endl;
-  println!("{:<24}{:>8}{:>8}","", "sizeof", "alignof");
+    // std::cout << Format("%-24s %8s %8s", "", "sizeof", "alignof") << std::endl;
+    println!("{:<24}{:>8}{:>8}", "", "sizeof", "alignof");
 
-  // basic types
-  dump_type::<u8>();
-  dump_type::<char>();
-  dump_type::<char>();
-  dump_type::<u16>();
-  dump_type::<u32>();
-  dump_type::<u64>();
-  // DumpType<char>(); 
-  // DumpType<short>();
-  // DumpType<int>();
-  // DumpType<long>();
-  // DumpType<long long>();
-  // DumpType<intmax_t>();
-  // DumpType<void *>();
-  // DumpType<size_t>();
-  // DumpType<max_align_t>();
+    // basic types
+    dump_type::<u8>();
+    dump_type::<char>();
+    dump_type::<char>();
+    dump_type::<u16>();
+    dump_type::<u32>();
+    dump_type::<u64>();
+    // DumpType<char>();
+    // DumpType<short>();
+    // DumpType<int>();
+    // DumpType<long>();
+    // DumpType<long long>();
+    // DumpType<intmax_t>();
+    // DumpType<void *>();
+    // DumpType<size_t>();
+    // DumpType<max_align_t>();
 
-  // BESS types
-  // dump_type::<rte_mbuf>();
-  // dump_type::<Packet>();
-  // dump_type::<bess::PacketBatch>();
+    // BESS types
+    // dump_type::<rte_mbuf>();
+    // dump_type::<Packet>();
+    // dump_type::<bess::PacketBatch>();
 
-  // dump_type::<Scheduler>();
-  // dump_type::<TrafficClass>();
-  // dump_type::<Task>();
+    // dump_type::<Scheduler>();
+    // dump_type::<TrafficClass>();
+    // dump_type::<Task>();
 
-  // dump_type::<Module>();
-  // dump_type::<bess::Gate>();
-  // dump_type::<bess::IGate>();
-  // dump_type::<bess::OGate>();
+    // dump_type::<Module>();
+    // dump_type::<bess::Gate>();
+    // dump_type::<bess::IGate>();
+    // dump_type::<bess::OGate>();
 
-  // dump_type::<Worker>();
-  
+    // dump_type::<Worker>();
 }

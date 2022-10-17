@@ -1,7 +1,7 @@
-use log::*;
 use crate::core::bessd;
 use crate::core::worker::*;
 use clap::Parser;
+use log::*;
 
 // Port this BESS instance listens on.
 // Panda came up with this default number

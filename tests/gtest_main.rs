@@ -27,15 +27,15 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include <glog/logging.h>
-#include <gtest/gtest.h>
+// #include <glog/logging.h>
+// #include <gtest/gtest.h>
 
-int main(int argc, char **argv) {
-  google::InitGoogleLogging(argv[0]);
-  testing::InitGoogleTest(&argc, argv);
+// int main(int argc, char **argv) {
+//   google::InitGoogleLogging(argv[0]);
+//   testing::InitGoogleTest(&argc, argv);
 
-  // By default, suppress annoying warnings on every death test.
-  testing::GTEST_FLAG(death_test_style) = "threadsafe";
+//   // By default, suppress annoying warnings on every death test.
+//   testing::GTEST_FLAG(death_test_style) = "threadsafe";
 
-  return RUN_ALL_TESTS();
-}
+//   return RUN_ALL_TESTS();
+// }

@@ -1,4 +1,4 @@
-# BESS data-plane in Rust
+## BESS data-plane in Rust
 `bess-rs` is a Rust implementation of [BESS](https://github.com/NetSys/bess).
 
 ## Objective
