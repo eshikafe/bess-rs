@@ -7,51 +7,34 @@ use tonic::transport::server::Router;
 use tonic::Code;
 use tonic::{transport::Server, Request, Response, Status};
 
-// #include "pb/service.grpc.pb.h"
 pub mod bess_pb {
     tonic::include_proto!("bess.pb");
 }
 
-// using bess::TrafficClassBuilder;
-// using namespace bess::pb;
 use bess_pb::bess_control_server::{BessControl, BessControlServer};
 use bess_pb::*;
 
 // #include <thread>
 // use std::thread;
 
-// #include "bessd.h"
-use crate::core::bessd;
-// #include "gate.h"
-use crate::core::gate;
+use crate::bessd;
+use crate::gate;
 // #include "gate_hooks/tcpdump.h"
 // #include "gate_hooks/track.h"
-// #include "message.h"
-use crate::core::message;
-// #include "metadata.h"
-use crate::core::metadata;
-// #include "module.h"
-use crate::core::module;
-// #include "module_graph.h"
-use crate::core::module_graph;
-// #include "opts.h"
-use crate::core::opts;
-// #include "packet_pool.h"
-use crate::core::packet_pool;
-// #include "port.h"
-use crate::core::port;
-// #include "resume_hook.h"
-use crate::core::resume_hook;
-// #include "scheduler.h"
-use crate::core::scheduler;
-// #include "shared_obj.h"
-use crate::core::shared_obj;
-// #include "traffic_class.h"
-use crate::core::traffic_class;
+use crate::message;
+use crate::metadata;
+use crate::module;
+use crate::module_graph;
+use crate::opts;
+use crate::packet_pool;
+use crate::port;
+use crate::resume_hook;
+use crate::scheduler;
+use crate::shared_obj;
+use crate::traffic_class;
 // #include "utils/ether.h"
 // #include "utils/time.h"
-// #include "worker.h"
-use crate::core::worker;
+use crate::worker;
 
 // #include <rte_mempool.h>
 // #include <rte_ring.h>
@@ -467,8 +450,6 @@ impl BessControl for BESSControlService {
         // WorkerPauser wp;
 
         info!("*** ResetAll requested ***");
-        todo!();
-
         // status = ResetModules(context, request, response);
         // if (response->error().code() != 0) {
         //   return status;
@@ -518,52 +499,87 @@ impl BessControl for BESSControlService {
     //   Status PauseWorker(ServerContext*, const PauseWorkerRequest* req,
     //                      EmptyResponse*) override {
     //     std::lock_guard<std::recursive_mutex> lock(mutex_);
-
-    //     int wid = req->wid();
-    //     // TODO: It should be made harder to wreak havoc on the rest of the daemon
-    //     // when using PauseWorker(). For now a warning and suggestion that this is
-    //     // for experts only is sufficient.
-    //     LOG(WARNING) << "PauseWorker() is an experimental operation and should be"
-    //                  << " used with care. Long-term support not guaranteed.";
-    //     pause_worker(wid);
-    //     LOG(INFO) << "*** Worker " << wid << " has been paused ***";
-    //     return Status::OK;
-    //   }
+    async fn pause_worker(
+        &self,
+        req: Request<PauseWorkerRequest>,
+    ) -> Result<Response<EmptyResponse>, Status> {
+        let wid = req.get_ref().wid;
+        // TODO: It should be made harder to wreak havoc on the rest of the daemon
+        // when using PauseWorker(). For now a warning and suggestion that this is
+        // for experts only is sufficient.
+        warn!("PauseWorker() is an experimental operation and should be used with care. Long-term support not guaranteed.");
+        //     pause_worker(wid);
+        info!("*** Worker {} has been paused ***", wid);
+        //     return Status::OK;
+        Ok(Response::new(EmptyResponse {
+            error: Some(bess_pb::Error {
+                code: 0,
+                errmsg: "".to_string(),
+            }),
+        }))
+    }
 
     //   Status ResumeAll(ServerContext*, const EmptyRequest*,
     //                    EmptyResponse*) override {
     //     std::lock_guard<std::recursive_mutex> lock(mutex_);
+    async fn resume_all(
+        &self,
+        request: Request<EmptyRequest>,
+    ) -> Result<Response<EmptyResponse>, Status> {
+        //     if (!is_any_worker_running()) {
+        //       attach_orphans();
+        //     }
 
-    //     if (!is_any_worker_running()) {
-    //       attach_orphans();
-    //     }
+        //     bess::run_global_resume_hooks();
 
-    //     bess::run_global_resume_hooks();
-
-    //     LOG(INFO) << "*** Resuming ***";
-    //     resume_all_workers();
-    //     return Status::OK;
-    //   }
+        info!("*** Resuming ***");
+        //     resume_all_workers();
+        //     return Status::OK;
+        Ok(Response::new(EmptyResponse {
+            error: Some(bess_pb::Error {
+                code: 0,
+                errmsg: "".to_string(),
+            }),
+        }))
+    }
 
     //   Status ResumeWorker(ServerContext*, const ResumeWorkerRequest* req,
     //                       EmptyResponse*) override {
     //     std::lock_guard<std::recursive_mutex> lock(mutex_);
-
-    //     int wid = req->wid();
-    //     LOG(INFO) << "*** Resuming worker " << wid << " ***";
-    //     resume_worker(wid);
-    //     return Status::OK;
-    //   }
+    async fn resume_worker(
+        &self,
+        req: Request<ResumeWorkerRequest>,
+    ) -> Result<Response<EmptyResponse>, Status> {
+        let wid = req.get_ref().wid;
+        info!("*** Resumingworker {} ***", wid);
+        //     resume_worker(wid);
+        //     return Status::OK;
+        Ok(Response::new(EmptyResponse {
+            error: Some(bess_pb::Error {
+                code: 0,
+                errmsg: "".to_string(),
+            }),
+        }))
+    }
 
     //   Status ResetWorkers(ServerContext*, const EmptyRequest*,
     //                       EmptyResponse*) override {
     //     std::lock_guard<std::recursive_mutex> lock(mutex_);
-
-    //     WorkerPauser wp;
-    //     destroy_all_workers();
-    //     LOG(INFO) << "*** All workers have been destroyed ***";
-    //     return Status::OK;
-    //   }
+    async fn reset_workers(
+        &self,
+        req: Request<EmptyRequest>,
+    ) -> Result<Response<EmptyResponse>, Status> {
+        //     WorkerPauser wp;
+        //     destroy_all_workers();
+        info!("*** All workers have been destroyed ***");
+        //     return Status::OK;
+        Ok(Response::new(EmptyResponse {
+            error: Some(bess_pb::Error {
+                code: 0,
+                errmsg: "".to_string(),
+            }),
+        }))
+    }
 
     //   Status ListWorkers(ServerContext*, const EmptyRequest*,
     //                      ListWorkersResponse* response) override {
@@ -1974,7 +1990,7 @@ impl BessControl for BESSControlService {
 //   server.Listen('0.0.0.0:777');
 //   server.Listen('127.0.0.1:888');
 //   server.run();
-pub struct ApiServer{}
+pub struct ApiServer {}
 
 impl ApiServer {
     pub fn new() -> Self {

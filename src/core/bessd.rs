@@ -48,17 +48,16 @@
 // #include <string>
 // #include <tuple>
 
-
 // #include "debug.h"
 use crate::core::debug;
 use crate::core::opts::*;
+use chrono;
 use clap::Parser;
+use env_logger::fmt::Color;
+use env_logger::{Builder, Target, WriteStyle};
 use exitcode;
 use log::*;
-use env_logger::{Builder, WriteStyle, Target};
 use std::io::Write;
-use chrono;
-use env_logger::fmt::Color;
 use std::process::exit;
 
 use libc::*;
@@ -163,21 +162,30 @@ pub fn process_command_line_args() {
     if flags.f {
         // google::LogToStderr();
         env_logger::Builder::new()
-        .format(|buf, record| {
-            writeln!(
-                buf,
-                "[{} {} {}:{}] [{}] - {}",
-                chrono::Local::now().format("%Y-%m-%dT%H:%M:%S"),
-                record.target(),
-                record.file().unwrap(),
-                record.line().unwrap(),
-                record.level(),
-                record.args()
-            )
-        })
-        .write_style(WriteStyle::Always )
-        .target(Target::Stderr)
-        .init();
+            .format(|buf, record| {
+                let mut style = buf.style();
+                match record.level() {
+                    Level::Error | Level::Warn => style.set_color(Color::Red),
+                    Level::Debug => style.set_color(Color::Blue),
+                    Level::Trace => style.set_color(Color::Magenta),
+                    Level::Info => style.set_color(Color::Green),
+                };
+
+                writeln!(
+                    buf,
+                    "[{} {} {}:{}] [{}] - {}",
+                    chrono::Local::now().format("%Y-%m-%dT%H:%M:%S"),
+                    style.value(record.target()),
+                    record.file().unwrap(),
+                    record.line().unwrap(),
+                    style.value(record.level()),
+                    record.args()
+                )
+            })
+            .filter(Some("bessd"), LevelFilter::Debug)
+            .write_style(WriteStyle::Always)
+            .target(Target::Stderr)
+            .init();
     }
 }
 
