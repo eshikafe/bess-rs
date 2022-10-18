@@ -1,6 +1,8 @@
 use bess::core::bessd;
 use bess::core::opts::*;
-use bess::core::bessctl;
+// use bess::core::bessctl;t
+use log::*;
+use clap::Parser;
 
 #[tokio::main]
 async fn main() {
@@ -22,7 +24,7 @@ async fn main() {
     // ignore_result(bessd::SetResourceLimit());
 
     let mut signal_fd = -1;
-    if (flags.f) {
+    if flags.f {
         info!("Launching BESS daemon in process mode...");
     } else {
         info!("Launching BESS daemon in background...");
@@ -41,8 +43,8 @@ async fn main() {
     // bessd::write_pid_file(pidfile_fd, getpid());
 
     // Load plugins
-    let dir = flags.modules;
-    if !bessd::load_plugins(dir.clone()) {
+    let dir = flags.modules.as_str();
+    if !bessd::load_plugins(dir) {
         warn!(
             "load_plugins() failed to load from directory: {}",
             dir.clone()
@@ -54,13 +56,13 @@ async fn main() {
 
     // PortBuilder::InitDrivers();
 
-    let server = bessctl:: ApiServer::new();
+    // let server = bessctl:: ApiServer::new();
     let mut grpc_url = flags.grpc_url;
     if grpc_url.is_empty() {
         grpc_url = format!("{}:{}", flags.b, flags.p);
     }
 
-    server.listen(&grpc_url);
+    // server.listen(&grpc_url);
 
     // Signal the parent that all initialization has been finished.
     // if (!flags.f) {
@@ -71,7 +73,7 @@ async fn main() {
     //   close(signal_fd);
     // }
 
-    server.run();
+    // server.run();
 
     // TODO: DPDK required
     // rte_eal_mp_wait_lcore();
