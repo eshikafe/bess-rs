@@ -1,8 +1,8 @@
 [![Build Status](https://github.com/eshikafe/bess-rs/actions/workflows/rust.yml/badge.svg)](https://github.com/eshikafe/bess-rs/actions/workflows/rust.yml)
 
 
-## BESS data-plane in Rust
-`bess-rs` is a Rust implementation of [BESS](https://github.com/NetSys/bess).
+## bess-rs
+A Rust implementation of [BESS(Berkeley Extensible Software Switch)](https://github.com/NetSys/bess).
 
 ## Objective
 Experimenting with Rust for high performance packet processing.
