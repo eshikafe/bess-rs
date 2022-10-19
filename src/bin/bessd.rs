@@ -1,6 +1,6 @@
-use bess::core::bessd;
-use bess::core::opts::*;
-// use bess::core::bessctl;t
+use bess::bessd;
+use bess::opts::*;
+// use bess::bessctl;
 use log::*;
 use clap::Parser;
 
