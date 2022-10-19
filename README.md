@@ -1,3 +1,6 @@
+[![Build Status](https://github.com/eshikafe/bess-rs/actions/workflows/rust.yml/badge.svg)](https://github.com/eshikafe/bess-rs/actions/workflows/rust.yml)
+
+
 ## BESS data-plane in Rust
 `bess-rs` is a Rust implementation of [BESS](https://github.com/NetSys/bess).
 
