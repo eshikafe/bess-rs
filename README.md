@@ -5,10 +5,11 @@
 A Rust implementation of [BESS(Berkeley Extensible Software Switch)](https://github.com/NetSys/bess).
 
 ## Dependencies
-- sudo apt update && sudo apt upgrade -y
-- sudo apt install -y protobuf-compiler libprotobuf-dev
-- Install python3
-- pip install --user protobuf==3.20.1 grpcio==1.46.0 grpcio-tools==1.46.0
+- `sudo apt update && sudo apt upgrade -y`
+- `sudo apt install -y protobuf-compiler libprotobuf-dev`
+- Install python3 (Python 3.8.10 used for development)
+- `pip install --user protobuf==3.20.1 grpcio==1.46.0 grpcio-tools==1.46.0`
+- `pip install --user scapy`
 
 ## Objective
 Experimenting with Rust for high performance packet processing.
