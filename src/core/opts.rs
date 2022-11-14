@@ -1,5 +1,4 @@
 use crate::core::bessd;
-use crate::core::worker::*;
 use clap::Parser;
 use log::*;
 
@@ -10,7 +9,7 @@ pub const K_DEFAULT_BIND_ADDR: &str = "127.0.0.1";
 
 /// BESS Command Line Options:
 #[derive(Parser, Debug)]
-#[clap(version, about, long_about = None)]
+#[clap(version, about)]
 pub struct Options {
     /// Dump the size of internal data structures
     #[clap(long, value_parser, default_value_t = false)]
@@ -21,7 +20,7 @@ pub struct Options {
     pub i: String,
 
     /// Run BESS in foreground mode (for developers)
-    #[clap(long, value_parser, default_value_t = false)]
+    #[clap(short, value_parser, default_value_t = false)]
     pub f: bool,
 
     /// Kill existing BESS instance, if any

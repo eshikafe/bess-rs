@@ -3,6 +3,7 @@
 
 // use log::*;
 
+// use tonic::codegen::http::response;
 // use tonic::transport::server::Router;
 // use tonic::Code;
 // use tonic::{transport::Server, Request, Response, Status};
@@ -13,9 +14,6 @@
 
 // use bess_pb::bess_control_server::{BessControl, BessControlServer};
 // use bess_pb::*;
-
-// // #include <thread>
-// // use std::thread;
 
 // use crate::bessd;
 // use crate::gate;
@@ -588,35 +586,54 @@
 //         &self,
 //         req: Request<EmptyRequest>,
 //     ) -> Result<Response<ListWorkersResponse>, Status> {
-//     //     for (int wid = 0; wid < Worker::kMaxWorkers; wid++) {
-//     //       if (!is_worker_active(wid))
-//     //         continue;
-//     //       ListWorkersResponse_WorkerStatus* status = response->add_workers_status();
-//     //       status->set_wid(wid);
-//     //       status->set_running(is_worker_running(wid));
-//     //       status->set_core(workers[wid]->core());
-//     //       status->set_num_tcs(workers[wid]->scheduler()->NumTcs());
-//     //       status->set_silent_drops(workers[wid]->silent_drops());
-//     //     }
-//     //     return Status::OK;
-//     //   }
+//         for wid in 0..worker::K_MAX_WORKERS {
+//             if (!worker::is_worker_active(wid)) {
+//                 continue;
+//             }
+//             let mut status = ListWorkersResponse::new();
+//             // let response = Response::new();
+
+//             //   ListWorkersResponse_WorkerStatus* status = response->add_workers_status();
+//             //   status->set_wid(wid);
+//             //   status->set_running(is_worker_running(wid));
+//             //   status->set_core(workers[wid]->core());
+//             //   status->set_num_tcs(workers[wid]->scheduler()->NumTcs());
+//             //   status->set_silent_drops(workers[wid]->silent_drops());
+//         }
+//         return Err(Status::OK);
+//     }
 
 //     //   Status AddWorker(ServerContext*, const AddWorkerRequest* request,
 //     //                    EmptyResponse* response) override {
+
+//     async fn add_worker(
+//         &self,
+//         request: Request<AddWorkerRequest>,
+//     ) -> Result<Response<EmptyResponse>, Status> {
+    
 //     //     std::lock_guard<std::recursive_mutex> lock(mutex_);
 
 //     //     uint64_t wid = request->wid();
+//     let wid = request.get_mut().wid;
 //     //     if (wid >= Worker::kMaxWorkers) {
 //     //       return return_with_error(response, EINVAL, "Invalid worker id");
 //     //     }
+//     if wid >= worker::K_MAX_WORKERS as i64 {
+//         return Err(Status::aborted("Invalid worker id"));
+//     }
 //     //     uint64_t core = request->core();
 //     //     if (!is_cpu_present(core)) {
 //     //       return return_with_error(response, EINVAL, "Invalid core %d", core);
 //     //     }
+//     let core = request.get_ref().core;
 //     //     if (is_worker_active(wid)) {
 //     //       return return_with_error(response, EEXIST, "worker:%d is already active",
 //     //                                wid);
 //     //     }
+//     if worker::is_worker_active(wid) {
+//         return Err(Status::aborted(format!("worker:{} is already active", wid)));
+//     }
+
 //     //     const std::string& scheduler = request->scheduler();
 //     //     if (scheduler != "" && scheduler != "experimental") {
 //     //       return return_with_error(response, EINVAL, "Invalid scheduler %s",
@@ -626,7 +643,7 @@
 //     //     launch_worker(wid, core, scheduler);
 //     //     return Status::OK;
 //     //   }
-
+//     }
 //     //   Status DestroyWorker(ServerContext*, const DestroyWorkerRequest* request,
 //     //                        EmptyResponse* response) override {
 //     //     std::lock_guard<std::recursive_mutex> lock(mutex_);
@@ -1989,42 +2006,42 @@
 // }
 
 // // gRPC server encapsulation. Usage:
-// //   ApiServer server;
-// //   server.Listen('0.0.0.0:777');
-// //   server.Listen('127.0.0.1:888');
+// //   let server = ApiServer::new();
+// //   server.listen('0.0.0.0:777');
 // //   server.run();
-// pub struct ApiServer {}
+// pub struct ApiServer {
+//     builder: Server,
+//     addr: Option<String>,
+// }
 
 // impl ApiServer {
 //     pub fn new() -> Self {
-//         todo!()
+//         Self {
+//             builder: Server::builder(),
+//             addr: None,
+//         }
 //     }
 
 //     // `addr` is a gRPC url
-//     pub fn listen(&mut self, addr: &str) {
-//         let service = BESSControlService::default();
-//         Server::builder()
-//             .add_service(BessControlServer::new(service))
-//             .serve(addr.parse().unwrap());
-//         info!("Server listening on {}", addr);
+//     pub fn listen(&mut self, addr: String) {
+//         self.addr = Some(addr.clone());
 //     }
 
 //     // Runs the API server until it is shutdown by KillBess RPC.
-//     pub fn run(&self) {
+//     pub async fn run(&mut self) {
 //         // if (!builder_) {
 //         //   // We are not listening on any sockets. There is nothing to do.
 //         //   return;
 //         // }
-
-//         // BESSControlImpl service;
-//         // builder_->RegisterService(&service);
-//         // builder_->SetSyncServerOption(grpc::ServerBuilder::MAX_POLLERS, 1);
-
-//         // std::unique_ptr<grpc::Server> server = builder_->BuildAndStart();
-//         // if (server == nullptr) {
-//         //   LOG(ERROR) << "ServerBuilder::BuildAndStart() failed";
-//         //   return;
-//         // }
+//         let service = BESSControlService::default();
+//         match self
+//             .builder
+//             .add_service(BessControlServer::new(service))
+//             .serve(self.addr.unwrap().parse().unwrap())
+//         {
+//             OK(()) => info!("Server listening on {}", self.addr.unwrap()),
+//             Err(e) => error!("Server failed to start"),
+//         }
 
 //         // service.set_shutdown_func([&server]() { server->Shutdown(); });
 //         // server->Wait();

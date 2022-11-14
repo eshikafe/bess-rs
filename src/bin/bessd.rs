@@ -23,7 +23,7 @@ async fn main() {
     // let pidfile_fd = bessd::CheckUniqueInstance(flag.i);
     // ignore_result(bessd::SetResourceLimit());
 
-    let mut signal_fd = -1;
+    let _signal_fd = -1;
     if flags.f {
         info!("Launching BESS daemon in process mode...");
     } else {

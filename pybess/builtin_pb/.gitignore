@@ -8,3 +8,5 @@
 !ports
 ports/*
 !ports/__init__.py
+*pb2.py
+*grpc.py

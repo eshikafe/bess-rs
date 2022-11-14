@@ -35,12 +35,12 @@ use crate::core::scheduler::Scheduler;
 // use crate::packet_pool::PacketPool;
 
 // class Task;
-const kMaxWorkers: u32 = 64;
-const kAnyWorker: i32 = -1; // unspecified worker ID
+pub const K_MAX_WORKERS: u32 = 64;
+pub const K_ANY_WORKER: i32 = -1; // unspecified worker ID
 
 pub struct Worker {
     status: WorkerStatus,
-    wid: u32,  // always [0, kMaxWorkers - 1]
+    wid: u32,  // always [0, K_MAX_WORKERS - 1]
     core: u32, // TODO: should be cpuset_t
     socket: u32,
     fd_event: u32,
@@ -137,9 +137,13 @@ impl Worker {
 
 // int is_cpu_present(unsigned int core_id);
 
+//TODO
 // static inline int is_worker_active(int wid) {
 //   return workers[wid] != nullptr;
 // }
+pub fn is_worker_active(wid: i64) -> bool {
+    true
+}
 
 // inline bool is_worker_running(int wid) {
 //   return workers[wid] && workers[wid]->status() == WORKER_RUNNING;

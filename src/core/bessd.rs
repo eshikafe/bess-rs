@@ -28,27 +28,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-// #include <dirent.h>
-// #include <dlfcn.h>
-// #include <sys/file.h>
-// #include <sys/resource.h>
-// #include <sys/stat.h>
-// #include <unistd.h>
-
-// #include <glog/logging.h>
-
-// #include <algorithm>
-// #include <cerrno>
-// #include <csignal>
-// #include <cstdint>
-// #include <cstdio>
-// #include <cstdlib>
-// #include <iostream>
-// #include <list>
-// #include <string>
-// #include <tuple>
-
-// #include "debug.h"
 use crate::core::debug;
 use crate::core::opts::*;
 use chrono;
@@ -64,25 +43,6 @@ use libc::*;
 use nix::*;
 // #include "port.h"
 
-// How log messages are processed in BESS?
-// - In daemon mode:
-//   - via Google glog (recommended)
-//     - LOG(*) -> /tmp/bessd.*
-//     - Note that any log messages are routed to stderr, regardless of glog
-//       command-line flags, such as "stderrthreshold"
-//   - via libc stdout/stderr: e.g., printf(...) , fprintf(stderr, ...)
-//     - stdout -> stdout_funcs -> LOG(INFO) -> /tmp/bessd.INFO
-//     - stderr -> stderr_funcs -> LOG(WARNING) -> /tmp/bessd.[INFO|WARNING]
-//   - via libstdc++ cout/cerr
-//     - cout -> stdout_buf -> LOG(INFO) -> /tmp/bessd.INFO
-//     - cerr -> stderr_buf -> LOG(WARNING) -> /tmp/bessd.INFO
-// - In process mode (foreground; -f option):
-//   - via Google glog (recommended)
-//     - LOG(*) -> standard error (colored, if applicable)
-//   - via libc/libstdc++
-//     - stdout/cout -> standard output
-//     - stderr/cerr -> standard error (colored, currently always)
-
 // Utility routines for the main bess daemon.
 
 // When Modules extend other Modules, they may reference a shared object
@@ -90,65 +50,6 @@ use nix::*;
 // the number of passes that will be made while loading Module shared objects,
 // and thus the maximum inheritance depth of any Module.
 pub const K_INHERITANCE_LIMIT: u32 = 10;
-
-// namespace {
-
-// // Intercepts all output messages to an ostream-based class and redirect them
-// // to glog, with a specified log severity level. This behavior lasts as long as
-// // the object is alive, and afterwards the original behavior is restored.
-// class StreambufLogger : public std::streambuf {
-//  public:
-//   StreambufLogger(std::ostream &stream, google::LogSeverity severity)
-//       : stream_(stream), log_level_(severity) {
-//     org_streambuf_ = stream_.rdbuf(this);
-//   }
-
-//   // Restores the original streambuf
-//   virtual ~StreambufLogger() { stream_.rdbuf(org_streambuf_); }
-
-//   // Redirects all << operands to glog
-//   std::streamsize xsputn(const char_type *s, std::streamsize count) {
-//     WriteToGlog(s, count);
-//     return count;
-//   }
-
-//   // NOTE: This function is never going to be called for std::cout and
-//   // std::cerr, but implemented for general streams, for completeness)
-//   int_type overflow(int_type v) {
-//     char_type c = traits_type::to_char_type(v);
-//     WriteToGlog(&c, 1);
-//     return traits_type::not_eof(v);
-//   }
-
-//  private:
-//   void WriteToGlog(const char_type *s, std::streamsize count) {
-//     // prevent glog from creating an empty line even with no message
-//     if (count <= 0) {
-//       return;
-//     }
-
-//     // same as above. ignore << std::endl
-//     if (count == 1 && s[0] == '\n') {
-//       return;
-//     }
-
-//     // ignore trailing '\n', since glog will append it automatically
-//     if (s[count - 1] == '\n') {
-//       count--;
-//     }
-
-//     // since this is not an macro, we do not have __FILE__, and __LINE__ of
-//     // the caller.
-//     google::LogMessage("<unknown>", 0, log_level_).stream()
-//         << std::string(s, count);
-//   }
-
-//   std::ostream &stream_;
-//   std::streambuf *org_streambuf_;
-//   google::LogSeverity log_level_;
-// };
-
-// }  // namespace
 
 // Process command line arguments from gflags.
 pub fn process_command_line_args() {
@@ -182,11 +83,13 @@ pub fn process_command_line_args() {
                     record.args()
                 )
             })
-            .filter(Some("bessd"), LevelFilter::Debug)
+            .filter(None, LevelFilter::Debug)
             .write_style(WriteStyle::Always)
-            .target(Target::Stderr)
+            .target(Target::Stdout)
             .init();
+    // env_logger::init();
     }
+    
 }
 
 // Checks that we are running as superuser.
