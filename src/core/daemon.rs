@@ -23,7 +23,7 @@ pub fn start_daemon(){
         .privileged_action(|| "Executed before drop privileges");
 
     match daemonize.start() {
-        Ok(_) => eprintln!("Success, started daemon successfully"),
+        Ok(_) => println!("Success, started daemon successfully"),
         Err(e) => eprintln!("Error, {}", e),
         }
 }
