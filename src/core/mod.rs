@@ -18,4 +18,3 @@ pub mod shared_obj;
 pub mod task;
 pub mod traffic_class;
 pub mod worker;
-pub mod daemon;

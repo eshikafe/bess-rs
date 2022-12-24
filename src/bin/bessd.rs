@@ -1,6 +1,5 @@
 use bess::bessd;
 use bess::opts::*;
-use bess::daemon::*;
 // use bess::bessctl;
 use log::*;
 use clap::Parser;
@@ -25,7 +24,7 @@ async fn main() {
         info!("Launching BESS daemon in process mode...");
     } else {
         info!("Launching BESS daemon in background...");
-        start_daemon();
+        bessd::daemonize();
         // if flags.logtostderr == true || flags.alsologtostderr == true {
         //   flags.logtostderr = false;
         //   flags.alsologtostderr = false;
