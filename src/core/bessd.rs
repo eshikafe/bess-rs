@@ -122,7 +122,9 @@ pub fn write_pid_file(fd: u32, pid: u32) {}
 pub fn read_pid_file() -> (bool, u32) {
     let mut pid_result = (false, 0);
     if let Ok(pid) = read_file_lines(PID_FILE_PATH).unwrap().into_iter().nth(0).unwrap(){
-        pid_result = (true, pid.parse::<u32>().unwrap());
+        if pid != "" || pid.parse::<u32>().unwrap() > 0 {
+            pid_result = (true, pid.parse::<u32>().unwrap());
+        }
     }
     pid_result
 }
