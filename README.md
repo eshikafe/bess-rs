@@ -15,7 +15,9 @@ A Rust implementation of [BESS(Berkeley Extensible Software Switch)](https://git
 Experimenting with Rust for fast packet processing.
 
 ## Usage
+```=shell
 RUST_LOG=debug cargo run --bin bessd -- --help
+```
 
 ## Contributions
 The main task right now is to port the C++ code base completely to Rust.
