@@ -16,10 +16,6 @@ async fn main() {
     // google::SetVersionString(VERSION);
     // google::SetUsageMessage("BESS Command Line Options:");
     // google::ParseCommandLineFlags(&argc, &argv, true);
-
-    bessd::process_command_line_args();
-    bessd::check_running_as_root();
-
     // let pidfile_fd = bessd::CheckUniqueInstance(flag.i);
     // ignore_result(bessd::SetResourceLimit());
 
@@ -28,7 +24,7 @@ async fn main() {
         info!("Launching BESS daemon in process mode...");
     } else {
         info!("Launching BESS daemon in background...");
-
+        bessd::daemonize();
         // if flags.logtostderr == true || flags.alsologtostderr == true {
         //   flags.logtostderr = false;
         //   flags.alsologtostderr = false;
@@ -36,6 +32,9 @@ async fn main() {
         // }
         // signal_fd = bessd::daemonize();
     }
+
+    bessd::process_command_line_args();
+    bessd::check_running_as_root();
 
     info!("bessd {}", option_env!("CARGO_PKG_VERSION").unwrap());
 

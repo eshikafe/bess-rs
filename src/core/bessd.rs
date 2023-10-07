@@ -35,14 +35,18 @@ use clap::Parser;
 use env_logger::fmt::Color;
 use env_logger::{Builder, Target, WriteStyle};
 use exitcode;
+use exitcode::OK;
 use log::*;
-use std::io::Write;
+use std::io::{self, BufRead,Write};
 use std::process::exit;
+use std::path::Path;
 
 use libc::*;
 use nix::*;
 // #include "port.h"
 
+use std::{fs::File};
+use daemonize::Daemonize;
 // Utility routines for the main bess daemon.
 
 // When Modules extend other Modules, they may reference a shared object
@@ -50,6 +54,9 @@ use nix::*;
 // the number of passes that will be made while loading Module shared objects,
 // and thus the maximum inheritance depth of any Module.
 pub const K_INHERITANCE_LIMIT: u32 = 10;
+pub const STD_OUT_FILE_PATH:&str =  "/tmp/bessd.out";
+pub const STD_ERR_FILE_PATH:&str = "/tmp/bessd.err";
+pub const PID_FILE_PATH:&str = "/tmp/bessd2.pid";
 
 // Process command line arguments from gflags.
 pub fn process_command_line_args() {
@@ -112,8 +119,14 @@ pub fn write_pid_file(fd: u32, pid: u32) {}
 
 // Read the pid value from the given file fd.  Returns true and the read pid
 // value upon success.  Returns false upon failure.
-pub fn read_pid_file(fd: u32) -> (bool, u32) {
-    (false, 0)
+pub fn read_pid_file() -> (bool, u32) {
+    let mut pid_result = (false, 0);
+    if let Ok(pid) = read_file_lines(PID_FILE_PATH).unwrap().into_iter().nth(0).unwrap(){
+        if pid != "" || pid.parse::<u32>().unwrap() > 0 {
+            pid_result = (true, pid.parse::<u32>().unwrap());
+        }
+    }
+    pid_result
 }
 
 // Tries to acquire the daemon pidfile lock for the file open at the given fd.
@@ -132,8 +145,26 @@ pub fn check_unique_instance(pidfile_path: &str) -> u32 {
 }
 
 // Starts BESS as a daemon running in the background.
-pub fn daemonize() -> i32 {
-    0
+pub fn daemonize() -> u32 {
+    let std_out = File::create(STD_OUT_FILE_PATH).unwrap();
+    let std_err = File::create(STD_ERR_FILE_PATH).unwrap();
+    let daemonize = Daemonize::new()
+        .pid_file(PID_FILE_PATH) // Every method except `new` and `start`
+        .chown_pid_file(false)      // is optional, see `Daemonize` documentation
+        .working_directory("/tmp") // for default behaviour.
+        .group("daemon") // Group name
+        .user("unknown")
+        .group(2)        // or group id.
+        .umask(0o777)    // Set umask, `0o027` by default.
+        .stdout(std_out)  // Redirect stdout to `/tmp/daemon.out`.
+        .stderr(std_err)  // Redirect stderr to `/tmp/daemon.err`.
+        .privileged_action(|| "Executed before drop privileges");
+
+    match daemonize.start() {
+        Ok(_) => println!("Success, started daemon successfully"),
+        Err(e) => eprintln!("Error, {}", e),
+        }
+        read_pid_file().1
 }
 
 // Sets BESS's resource limit.  Returns true upon success.
@@ -166,4 +197,10 @@ pub fn list_plugins() -> Vec<String> {
 // slash at the end).
 pub fn get_current_directory() -> String {
     "".to_string()
+}
+
+// Read Files
+fn read_file_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>> where P: AsRef<Path>, {
+    let file = File::open(filename)?;
+    Ok(io::BufReader::new(file).lines())
 }
