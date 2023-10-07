@@ -1,8 +1,25 @@
+#![allow(unused_imports)]
+#![allow(unused_variables)]
+#![allow(dead_code)]
+
 use glob::glob;
 use std::io::Write;
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
 
+// BESS_DIR = os.path.dirname(os.path.abspath(__file__))
+
+// DEPS_DIR = '%s/deps' % BESS_DIR
+
+const DPDK_URL: &str = "https://fast.dpdk.org/rel";
+const DPDK_VER: &str = "dpdk-22.07";
+const DPDK_TARGET: &str = "x86_64-native-linuxapp-gcc";
+
+// kernel_release = cmd('uname -r', quiet=True).strip()
+
+// DPDK_DIR = '%s/%s' % (DEPS_DIR, DPDK_VER)
+// DPDK_CFLAGS = '"-g -w"'
+// DPDK_CONFIG = '%s/build/.config' % DPDK_DIR
 fn cmd(cmd: &str, quiet: bool) {
     let mut c = Command::new("python");
     if quiet == true {

@@ -419,7 +419,7 @@ pub fn set_trap_handler() {
     let sigact: sigaction;
     let i: usize = 0;
     let p_tmpdir = env::temp_dir();
-    unistd::unlink(format!("{}{}", p_tmpdir.display(), "/bessd_crash.log").as_str());
+    unistd::unlink(format!("{}{}", p_tmpdir.display(), "/bessd_crash.log").as_str()).unwrap();
     // libc::unlink is unsafe
     // unsafe {unlink(format!("{}{}", p_tmpdir, "/bessd_crash.log").as_ptr() as *const i8)};
 
@@ -464,7 +464,7 @@ fn dump_type<T: 'static>() {
     );
 }
 
-// TODO: Replace with DPDK crate
+// TODO: Replace with DPDK API
 fn rte_version() -> String {
     String::from("DPDK 17.02.0-rc0")
 }

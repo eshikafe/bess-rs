@@ -19,11 +19,11 @@ const QUANTUM: u32 = 1 << 10;
 
 // Resource types that can be accounted for.
 pub enum Resource {
-    RESOURCE_COUNT = 0, // Count of how many times scheduled
-    RESOURCE_CYCLE,     // CPU cycles
-    RESOURCE_PACKET,    // Packets set
-    RESOURCE_BIT,       // Bits sent
-    NUM_RESOURCES,      // Sentinel. Also used to indicate "no resource".
+    ResourceCount = 0, // Count of how many times scheduled
+    ResourceCycle,     // CPU cycles
+    ResourcePacket,    // Packets set
+    ResourceBit,       // Bits sent
+    NumResources,      // Sentinel. Also used to indicate "no resource".
 }
 
 // An array of counters for all resource types.
@@ -51,12 +51,12 @@ struct TcStats {
 // class TrafficClass;
 
 enum TrafficPolicy {
-    POLICY_PRIORITY = 0,
-    POLICY_WEIGHTED_FAIR,
-    POLICY_ROUND_ROBIN,
-    POLICY_RATE_LIMIT,
-    POLICY_LEAF,
-    NUM_POLICIES, // sentinel
+    PolicyPriority = 0,
+    PolicyWeightedFair,
+    PolicyRoundRobin,
+    PolicyRateLimit,
+    PolicyLeaf,
+    NumPolicies, // sentinel
 }
 
 mod traffic_class_initializer_types {
@@ -80,14 +80,14 @@ mod traffic_class_initializer_types {
 
 use traffic_class_initializer_types::*;
 
-const TrafficPolicyName: [&str; TrafficPolicy::NUM_POLICIES as usize] = [
+const TRAFFIC_POLICY_NAME: [&str; TrafficPolicy::NumPolicies as usize] = [
     "priority",
     "weighted_fair",
     "round_robin",
     "rate_limit",
     "leaf",
 ];
-
+v
 // const std::unordered_map<std::string, enum resource_t> ResourceMap = {
 //     {"count", RESOURCE_COUNT},
 //     {"cycle", RESOURCE_CYCLE},

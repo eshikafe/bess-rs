@@ -1,34 +1,26 @@
-// namespace bess {
+#![allow(unused_imports)]
+#![allow(unused_variables)]
 
-//   bool IsDpdkInitialized();
+use crate::memory;
+use crate::opts;
+use crate::worker;
+use log;
 
-//   // Initialize DPDK, with the specified amount of hugepage memory.
-//   // Safe to call multiple times.
-//   void InitDpdk(int dpdk_mb_per_socket = 0);
-
-//   }  // namespace bess
-
-// #include <syslog.h>
-// #include <unistd.h>
-
-// #include <glog/logging.h>
 // #include <rte_config.h>
 // #include <rte_cycles.h>
 // #include <rte_eal.h>
 // #include <rte_ethdev.h>
 
-// #include <cassert>
-// #include <cstdio>
-// #include <cstdlib>
-// #include <cstring>
-// #include <string>
 
-// #include "memory.h"
-// #include "opts.h"
-// #include "worker.h"
+pub fn is_dpdk_initialized() -> bool {
+    todo!()
+}
 
-// namespace bess {
-// namespace {
+// Initialize DPDK, with the specified amount of hugepage memory.
+// Safe to call multiple times.
+pub fn init_dpdk(dpdk_mb_per_socket: i32) {
+    todo!();
+}
 
 // void disable_syslog() {
 //   setlogmask(0x01);
@@ -38,18 +30,6 @@
 //   setlogmask(0xff);
 // }
 
-// // for log messages during rte_eal_init()
-// ssize_t dpdk_log_init_writer(void *, const char *data, size_t len) {
-//   enable_syslog();
-//   LOG(INFO) << std::string(data, len);
-//   disable_syslog();
-//   return len;
-// }
-
-// ssize_t dpdk_log_writer(void *, const char *data, size_t len) {
-//   LOG(INFO) << std::string(data, len);
-//   return len;
-// }
 
 // class CmdLineOpts {
 //  public:

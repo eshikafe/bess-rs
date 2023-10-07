@@ -1,10 +1,12 @@
-use crate::core::bessd;
+use crate::bessd;
 use clap::Parser;
 use log::*;
 
+
+
 // Port this BESS instance listens on.
 // Panda came up with this default number
-pub const K_DEFAULT_PORT: u32 = 0x02912; // 10514 in decimal
+pub const K_DEFAULT_PORT: u32 = 10514;
 pub const K_DEFAULT_BIND_ADDR: &str = "127.0.0.1";
 
 /// BESS Command Line Options:
@@ -115,7 +117,7 @@ pub fn validate_tcp_port(value: u32) -> bool {
 // static const bool _p_dummy[[maybe_unused]] =
 //     google::RegisterFlagValidator(&FLAGS_p, &ValidateTCPPort);
 
-pub fn validate_megabytes_per_socket(value: u32) -> bool {
+pub fn validate_megabytes_per_socket(value: i32) -> bool {
     if value < 0 {
         error!("Invalid memory size: {}", value);
         return false;

@@ -128,7 +128,15 @@ impl Worker {
 //  * Attach orphan TCs to workers. Note this does not ensure optimal placement.
 //  */
 // void attach_orphans();
+fn attach_orphans() {
+    todo!();
+    
+}
 // void resume_worker(int wid);
+fn resume_worker(wid: i32) {
+    todo!();
+}
+
 // void resume_all_workers();
 // void destroy_worker(int wid);
 // void destroy_all_workers();
@@ -141,13 +149,15 @@ impl Worker {
 // static inline int is_worker_active(int wid) {
 //   return workers[wid] != nullptr;
 // }
-pub fn is_worker_active(wid: i64) -> bool {
+pub fn is_worker_active(wid: u32) -> bool {
     true
 }
 
-// inline bool is_worker_running(int wid) {
-//   return workers[wid] && workers[wid]->status() == WORKER_RUNNING;
-// }
+pub fn is_worker_running(wid: u32) -> bool {
+    false
+//TODO
+  //return workers[wid] && workers[wid]->status() == WORKER_RUNNING;
+}
 
 // // arg (int) is the core id the worker should run on, and optionally the
 // // scheduler to use.
