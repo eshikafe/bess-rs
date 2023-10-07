@@ -8,10 +8,6 @@ A Rust implementation of [BESS(Berkeley Extensible Software Switch)](https://git
 - Python 3+ (for bessctl)
 - `sudo apt update && sudo apt upgrade -y`
 - `sudo apt install -y protobuf-compiler libprotobuf-dev`
-<<<<<<< HEAD
-=======
-- Install python3 (Python 3.8.10 is used for development)
->>>>>>> 7b7c8f0af7cdd06bcfd03f85ab000bdcc2107df6
 - `pip install --user protobuf==3.20.1 grpcio==1.46.0 grpcio-tools==1.46.0`
 - `pip install --user scapy`
 
