@@ -625,7 +625,7 @@ impl BessControl for BESSControlService {
         //                                wid);
         //     }
         if worker::is_worker_active(wid) {
-            return Err(Status::aborted(format!("worker:{} is already active", wid)));
+            return Err(Status::aborted("active"));
         }
 
         //     const std::string& scheduler = request->scheduler();

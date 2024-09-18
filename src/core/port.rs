@@ -1,16 +1,13 @@
-// #include <glog/logging.h>
-// #include <google/protobuf/any.pb.h>
-// #include <gtest/gtest_prod.h>
 
 // use message;
 // use module;
 // use packet;
 // use pb::port_msg_pb;
 // use pktbatch;
-// use utils::common;
-// use utils::ether;
+// use utils::{common, ether};
 
-type queue_t = u8;
+
+type QueueT = u8;
 
 const MAX_QUEUES_PER_DIR: u8 = 128; // [0, 31] (for each RX/TX)
 

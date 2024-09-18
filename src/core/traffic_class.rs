@@ -87,7 +87,7 @@ const TRAFFIC_POLICY_NAME: [&str; TrafficPolicy::NumPolicies as usize] = [
     "rate_limit",
     "leaf",
 ];
-v
+
 // const std::unordered_map<std::string, enum resource_t> ResourceMap = {
 //     {"count", RESOURCE_COUNT},
 //     {"cycle", RESOURCE_CYCLE},

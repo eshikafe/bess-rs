@@ -1,11 +1,6 @@
-// #include <glog/logging.h>
+use std::thread;
 
-// #include <cstdint>
-// #include <string>
-// #include <thread>
-// #include <type_traits>
-
-// #include "gate.h"
+// use gate;
 // #include "traffic_class.h"
 // #include "utils/common.h"
 // #include "utils/random.h"
@@ -116,18 +111,22 @@ impl Worker {
 // extern std::thread worker_threads[Worker::kMaxWorkers];
 // extern Worker *volatile workers[Worker::kMaxWorkers];
 
-// /* ------------------------------------------------------------------------
-//  * functions below are invoked by non-worker threads (the master)
-//  * ------------------------------------------------------------------------ */
-// int is_worker_core(int cpu);
+//  ------------------------------------------------------------------------
+//  functions below are invoked by non-worker threads (the master)
+//  ------------------------------------------------------------------------
+pub fn is_worker_core(cpu: u32) {
+    todo!();
+}
 
-// void pause_worker(int wid);
-// void pause_all_workers();
+pub fn pause_worker(wid: u32) {
+    todo!();
+}
 
-// /*!
-//  * Attach orphan TCs to workers. Note this does not ensure optimal placement.
-//  */
-// void attach_orphans();
+pub fn pause_all_workers() {
+    todo!();
+}
+
+//  Attach orphan TCs to workers. Note this does not ensure optimal placement.
 fn attach_orphans() {
     todo!();
     
