@@ -19,10 +19,10 @@ const QUANTUM: u32 = 1 << 10;
 
 // Resource types that can be accounted for.
 pub enum Resource {
-    ResourceCount = 0, // Count of how many times scheduled
-    ResourceCycle,     // CPU cycles
-    ResourcePacket,    // Packets set
-    ResourceBit,       // Bits sent
+    Count = 0, // Count of how many times scheduled
+    Cycle,     // CPU cycles
+    Packet,    // Packets set
+    Bit,       // Bits sent
     NumResources,      // Sentinel. Also used to indicate "no resource".
 }
 
@@ -30,10 +30,10 @@ pub enum Resource {
 // pub type resource_arr_t = [u64; Resource::NUM_RESOURCES as usize];
 
 // The priority of a traffic class.
-// typedef uint32_t priority_t;
+type priority_t = u32;
 
 // The amount of a resource allocated to a class.
-// typedef int32_t resource_share_t;
+type resource_share_t = u32;
 
 struct TcStats {
     usage: [u64; 4],
@@ -61,24 +61,26 @@ enum TrafficPolicy {
 
 mod traffic_class_initializer_types {
     enum PriorityFakeType {
-        PRIORITY = 0,
+        Priority,
     }
 
     enum WeightedFairFakeType {
-        WEIGHTED_FAIR = 0,
+        WeightedFair,
     }
     enum RoundRobinFakeType {
-        ROUND_ROBIN = 0,
+        RoundRobin,
     }
     enum RateLimitFakeType {
-        RATE_LIMIT = 0,
+        RateLimit,
     }
     enum LeafFakeType {
-        LEAF = 0,
+        Leaf,
     }
 }
 
 use traffic_class_initializer_types::*;
+use std::collections::HashMap;
+use once_cell::sync::Lazy;
 
 const TRAFFIC_POLICY_NAME: [&str; TrafficPolicy::NumPolicies as usize] = [
     "priority",
@@ -88,17 +90,23 @@ const TRAFFIC_POLICY_NAME: [&str; TrafficPolicy::NumPolicies as usize] = [
     "leaf",
 ];
 
-// const std::unordered_map<std::string, enum resource_t> ResourceMap = {
-//     {"count", RESOURCE_COUNT},
-//     {"cycle", RESOURCE_CYCLE},
-//     {"packet", RESOURCE_PACKET},
-//     {"bit", RESOURCE_BIT}};
+static RESOURCE_MAP: Lazy<HashMap<&'static str, Resource>> = Lazy::new(|| {
+    let mut m = HashMap::new();
+    m.insert("count",Resource::Count);
+    m.insert("cycle",Resource::Cycle);
+    m.insert("packet", Resource::Packet);
+    m.insert("bit",Resource::Bit);
+    m
+});
 
-// const std::unordered_map<int, std::string> ResourceName = {
-//     {RESOURCE_COUNT, "count"},
-//     {RESOURCE_CYCLE, "cycle"},
-//     {RESOURCE_PACKET, "packet"},
-//     {RESOURCE_BIT, "bit"}};
+static RESOURCE_NAME: Lazy<HashMap<Resource, &'static str>> = Lazy::new(|| {
+    let mut m = HashMap::new();
+    m.insert(Resource::Count, "count");
+    m.insert(Resource::Cycle, "cycle");
+    m.insert(Resource::Packet, "packet");
+    m.insert(Resource::Bit, "bit");
+    m
+});
 
 /* acc += x */
 // #define ACCUMULATE(acc, x)                                \

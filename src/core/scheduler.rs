@@ -1,10 +1,6 @@
-// #include <iostream>
-// #include <sstream>
-// #include <string>
-// #include <vector>
 
 // #include "module.h"
-use crate::core::traffic_class;
+// use crate::core::traffic_class;
 // #include "utils/extended_priority_queue.h"
 // #include "worker.h"
 
@@ -48,6 +44,7 @@ struct SchedWakeupQueue;
 
 // The non-instantiable base class for schedulers.  Implements common routines
 // needed for scheduling.
+
 pub struct Scheduler {
     // root: *TrafficClass,
     // default_rr_class: *RoundRobinTrafficClass,

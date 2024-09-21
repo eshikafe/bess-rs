@@ -32,7 +32,7 @@ use crate::shared_obj;
 use crate::traffic_class;
 // #include "utils/ether.h"
 // #include "utils/time.h"
-use crate::worker::{self, WorkerStatus};
+use crate::worker::{self, WorkerStatus, Worker};
 
 // #include <rte_mempool.h>
 // #include <rte_ring.h>
@@ -571,7 +571,7 @@ impl BessControl for BESSControlService {
         &self,
         req: Request<EmptyRequest>,
     ) -> Result<Response<ListWorkersResponse>, Status> {
-        for wid in 0..worker::K_MAX_WORKERS {
+        for wid in 0..Worker::K_MAX_WORKERS {
             if !worker::is_worker_active(wid) {
                 continue;
             }
@@ -607,36 +607,31 @@ impl BessControl for BESSControlService {
     ) -> Result<Response<EmptyResponse>, Status> {
         //     std::lock_guard<std::recursive_mutex> lock(mutex_);
 
-        //     uint64_t wid = request->wid();
-        let wid = request.get_mut().wid;
-        //     if (wid >= Worker::kMaxWorkers) {
-        //       return return_with_error(response, EINVAL, "Invalid worker id");
-        //     }
-        if wid >= worker::K_MAX_WORKERS as i64 {
+        let wid = request.get_ref().wid;
+        if wid >= Worker::K_MAX_WORKERS as i64 {
             return Err(Status::aborted("Invalid worker id"));
         }
-        //     uint64_t core = request->core();
-        //     if (!is_cpu_present(core)) {
-        //       return return_with_error(response, EINVAL, "Invalid core %d", core);
-        //     }
+
         let core = request.get_ref().core;
-        //     if (is_worker_active(wid)) {
-        //       return return_with_error(response, EEXIST, "worker:%d is already active",
-        //                                wid);
-        //     }
-        if worker::is_worker_active(wid) {
-            return Err(Status::aborted("active"));
+        if !worker::is_cpu_present(core) {
+            let response = format!("Invalid core {}", core);
+            return Err(Status::invalid_argument(response));
+        }
+        
+        if worker::is_worker_active(wid as usize) {
+            let response = format!("worker: {} is already active", wid);
+            return Err(Status::already_exists(response));
         }
 
-        //     const std::string& scheduler = request->scheduler();
-        //     if (scheduler != "" && scheduler != "experimental") {
-        //       return return_with_error(response, EINVAL, "Invalid scheduler %s",
-        //                                scheduler.c_str());
-        //     }
+        let scheduler = request.get_ref().scheduler.as_str();
+        if scheduler != "" && scheduler != "experimental" {
+            let response = format!("Invalid scheduler {}", scheduler);
+            return Err(Status::invalid_argument(response));
+        }
 
-        //     launch_worker(wid, core, scheduler);
-        //     return Status::OK;
-        //   }
+        worker::launch_worker(wid, core, scheduler);
+        return Ok(Response::new(EmptyResponse { error: None }));
+       
     }
     //   Status DestroyWorker(ServerContext*, const DestroyWorkerRequest* request,
     //                        EmptyResponse* response) override {
