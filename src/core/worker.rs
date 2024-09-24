@@ -36,10 +36,8 @@ pub enum WorkerStatus {
     Finished,
 }
 
-
 struct PacketPool;
 struct Task;
-
 
 pub struct Worker {
     status: WorkerStatus,
@@ -69,10 +67,10 @@ impl Worker {
     //  ----------------------------------------------------------------------
     //  functions below are invoked by worker threads
     //  ----------------------------------------------------------------------
-    
     pub fn is_pause_requested(&self) -> bool {
         self.status == WorkerStatus::Paused
     }
+    
     //  Block myself. Return nonzero if the worker needs to die
     pub fn block_worker(&self) -> i32 {
         todo!();

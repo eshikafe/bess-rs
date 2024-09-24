@@ -6,6 +6,11 @@
 // #include "utils/simd.h"
 // #include "utils/time.h"
 
+use traffic_class_initializer_types::*;
+use std::collections::HashMap;
+use once_cell::sync::Lazy;
+use lazy_static::lazy_static;
+
 // using bess::utils::extended_priority_queue;
 
 // A large default priority.
@@ -18,6 +23,7 @@ const STRIDE1: u32 = 1 << 20;
 const QUANTUM: u32 = 1 << 10;
 
 // Resource types that can be accounted for.
+#[derive(PartialEq, Eq, Hash)]
 pub enum Resource {
     Count = 0, // Count of how many times scheduled
     Cycle,     // CPU cycles
@@ -78,10 +84,6 @@ mod traffic_class_initializer_types {
     }
 }
 
-use traffic_class_initializer_types::*;
-use std::collections::HashMap;
-use once_cell::sync::Lazy;
-
 const TRAFFIC_POLICY_NAME: [&str; TrafficPolicy::NumPolicies as usize] = [
     "priority",
     "weighted_fair",
@@ -107,7 +109,6 @@ static RESOURCE_NAME: Lazy<HashMap<Resource, &'static str>> = Lazy::new(|| {
     m.insert(Resource::Bit, "bit");
     m
 });
-
 /* acc += x */
 // #define ACCUMULATE(acc, x)                                \
 //   {                                                       \
