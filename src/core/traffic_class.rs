@@ -6,10 +6,9 @@
 // #include "utils/simd.h"
 // #include "utils/time.h"
 
-use traffic_class_initializer_types::*;
-use std::collections::HashMap;
+// use traffic_class_initializer_types::*;
 use once_cell::sync::Lazy;
-use lazy_static::lazy_static;
+use std::collections::HashMap;
 
 // using bess::utils::extended_priority_queue;
 
@@ -25,21 +24,21 @@ const QUANTUM: u32 = 1 << 10;
 // Resource types that can be accounted for.
 #[derive(PartialEq, Eq, Hash)]
 pub enum Resource {
-    Count = 0, // Count of how many times scheduled
-    Cycle,     // CPU cycles
-    Packet,    // Packets set
-    Bit,       // Bits sent
-    NumResources,      // Sentinel. Also used to indicate "no resource".
+    Count = 0,    // Count of how many times scheduled
+    Cycle,        // CPU cycles
+    Packet,       // Packets set
+    Bit,          // Bits sent
+    NumResources, // Sentinel. Also used to indicate "no resource".
 }
 
 // An array of counters for all resource types.
 // pub type resource_arr_t = [u64; Resource::NUM_RESOURCES as usize];
 
 // The priority of a traffic class.
-type priority_t = u32;
+// type priority_t = u32;
 
 // The amount of a resource allocated to a class.
-type resource_share_t = u32;
+// type resource_share_t = u32;
 
 struct TcStats {
     usage: [u64; 4],
@@ -94,10 +93,10 @@ const TRAFFIC_POLICY_NAME: [&str; TrafficPolicy::NumPolicies as usize] = [
 
 static RESOURCE_MAP: Lazy<HashMap<&'static str, Resource>> = Lazy::new(|| {
     let mut m = HashMap::new();
-    m.insert("count",Resource::Count);
-    m.insert("cycle",Resource::Cycle);
+    m.insert("count", Resource::Count);
+    m.insert("cycle", Resource::Cycle);
     m.insert("packet", Resource::Packet);
-    m.insert("bit",Resource::Bit);
+    m.insert("bit", Resource::Bit);
     m
 });
 

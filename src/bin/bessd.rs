@@ -1,8 +1,8 @@
 use bess::bessd;
 use bess::opts::*;
 // use bess::bessctl;
-use log::*;
 use clap::Parser;
+use log::*;
 
 #[tokio::main]
 async fn main() {

@@ -2,8 +2,6 @@ use crate::bessd;
 use clap::Parser;
 use log::*;
 
-
-
 // Port this BESS instance listens on.
 // Panda came up with this default number
 pub const K_DEFAULT_PORT: u32 = 10514;

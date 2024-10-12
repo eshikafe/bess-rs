@@ -1,11 +1,9 @@
-
 // use message;
 // use module;
 // use packet;
 // use pb::port_msg_pb;
 // use pktbatch;
 // use utils::{common, ether};
-
 
 type QueueT = u8;
 

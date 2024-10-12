@@ -36,16 +36,16 @@ use env_logger::fmt::Color;
 use env_logger::{Target, WriteStyle};
 use exitcode;
 use log::*;
-use std::io::{self, BufRead,Write};
-use std::process::exit;
+use std::io::{self, BufRead, Write};
 use std::path::Path;
+use std::process::exit;
 
 use libc::*;
 use nix::*;
 // #include "port.h"
 
-use std::{fs::File};
 use daemonize::Daemonize;
+use std::fs::File;
 // Utility routines for the main bess daemon.
 
 // When Modules extend other Modules, they may reference a shared object
@@ -53,9 +53,9 @@ use daemonize::Daemonize;
 // the number of passes that will be made while loading Module shared objects,
 // and thus the maximum inheritance depth of any Module.
 pub const K_INHERITANCE_LIMIT: u32 = 10;
-pub const STD_OUT_FILE_PATH:&str =  "/tmp/bessd.out";
-pub const STD_ERR_FILE_PATH:&str = "/tmp/bessd.err";
-pub const PID_FILE_PATH:&str = "/tmp/bessd2.pid";
+pub const STD_OUT_FILE_PATH: &str = "/tmp/bessd.out";
+pub const STD_ERR_FILE_PATH: &str = "/tmp/bessd.err";
+pub const PID_FILE_PATH: &str = "/tmp/bessd2.pid";
 
 // Process command line arguments from gflags.
 pub fn process_command_line_args() {
@@ -93,9 +93,8 @@ pub fn process_command_line_args() {
             .write_style(WriteStyle::Always)
             .target(Target::Stdout)
             .init();
-    // env_logger::init();
+        // env_logger::init();
     }
-    
 }
 
 // Checks that we are running as superuser.
@@ -120,7 +119,12 @@ pub fn write_pid_file(fd: u32, pid: u32) {}
 // value upon success.  Returns false upon failure.
 pub fn read_pid_file() -> (bool, u32) {
     let mut pid_result = (false, 0);
-    if let Ok(pid) = read_file_lines(PID_FILE_PATH).unwrap().into_iter().nth(0).unwrap(){
+    if let Ok(pid) = read_file_lines(PID_FILE_PATH)
+        .unwrap()
+        .into_iter()
+        .nth(0)
+        .unwrap()
+    {
         if pid != "" || pid.parse::<u32>().unwrap() > 0 {
             pid_result = (true, pid.parse::<u32>().unwrap());
         }
@@ -149,21 +153,21 @@ pub fn daemonize() -> u32 {
     let std_err = File::create(STD_ERR_FILE_PATH).unwrap();
     let daemonize = Daemonize::new()
         .pid_file(PID_FILE_PATH) // Every method except `new` and `start`
-        .chown_pid_file(false)      // is optional, see `Daemonize` documentation
+        .chown_pid_file(false) // is optional, see `Daemonize` documentation
         .working_directory("/tmp") // for default behaviour.
         .group("daemon") // Group name
         .user("unknown")
-        .group(2)        // or group id.
-        .umask(0o777)    // Set umask, `0o027` by default.
-        .stdout(std_out)  // Redirect stdout to `/tmp/daemon.out`.
-        .stderr(std_err)  // Redirect stderr to `/tmp/daemon.err`.
+        .group(2) // or group id.
+        .umask(0o777) // Set umask, `0o027` by default.
+        .stdout(std_out) // Redirect stdout to `/tmp/daemon.out`.
+        .stderr(std_err) // Redirect stderr to `/tmp/daemon.err`.
         .privileged_action(|| "Executed before drop privileges");
 
     match daemonize.start() {
         Ok(_) => println!("Success, started daemon successfully"),
         Err(e) => eprintln!("Error, {}", e),
-        }
-        read_pid_file().1
+    }
+    read_pid_file().1
 }
 
 // Sets BESS's resource limit.  Returns true upon success.
@@ -199,7 +203,10 @@ pub fn get_current_directory() -> String {
 }
 
 // Read Files
-fn read_file_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>> where P: AsRef<Path>, {
+fn read_file_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
+where
+    P: AsRef<Path>,
+{
     let file = File::open(filename)?;
     Ok(io::BufReader::new(file).lines())
 }

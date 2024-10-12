@@ -2,11 +2,13 @@
 #![allow(unused_imports)]
 
 use log::*;
+use std::net::SocketAddr;
 
 use tonic::codegen::http::response;
 use tonic::transport::server::Router;
+use tonic::transport::Server;
 use tonic::Code;
-use tonic::{transport::Server, Request, Response, Status};
+use tonic::{Request, Response, Status};
 
 pub mod bess_pb {
     tonic::include_proto!("bess.pb");
@@ -32,7 +34,7 @@ use crate::shared_obj;
 use crate::traffic_class;
 // #include "utils/ether.h"
 // #include "utils/time.h"
-use crate::worker::{self, WorkerStatus, Worker};
+use crate::worker::{self, Worker, WorkerStatus};
 
 // #include <rte_mempool.h>
 // #include <rte_ring.h>
@@ -617,7 +619,7 @@ impl BessControl for BESSControlService {
             let response = format!("Invalid core {}", core);
             return Err(Status::invalid_argument(response));
         }
-        
+
         if worker::is_worker_active(wid as usize) {
             let response = format!("worker: {} is already active", wid);
             return Err(Status::already_exists(response));
@@ -631,7 +633,6 @@ impl BessControl for BESSControlService {
 
         worker::launch_worker(wid, core, scheduler);
         return Ok(Response::new(EmptyResponse { error: None }));
-       
     }
     //   Status DestroyWorker(ServerContext*, const DestroyWorkerRequest* request,
     //                        EmptyResponse* response) override {
@@ -1999,21 +2000,25 @@ impl BessControl for BESSControlService {
 //   server.listen('localhost:10514');
 //   server.run();
 pub struct ApiServer {
-    builder: Server,
-    addr: Option<String>,
+    builder: Option<Server>,
 }
+struct ServerBuilder;
 
 impl ApiServer {
     pub fn new() -> Self {
-        Self {
-            builder: Server::builder(),
-            addr: None,
-        }
+        Self { builder: None }
     }
 
-    // `addr` is a gRPC url
-    pub fn listen(&mut self, addr: String) {
-        self.addr = Some(addr.clone());
+    // `addr` is a gRPC url.
+    pub fn listen(&mut self, addr: &str) {
+        if self.builder.is_none() {
+            self.builder = Some(Server::builder());
+        }
+
+        log::info!("Server listening on {}", addr);
+
+        let addr = addr.parse::<SocketAddr>().expect("Invalid address");
+        self.builder.unwrap()
     }
 
     // Runs the API server until it is shutdown by KillBess RPC.

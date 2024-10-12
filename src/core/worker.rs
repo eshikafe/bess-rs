@@ -1,25 +1,23 @@
 // use std::thread;
-use std::path::Path;
 use lazy_static::lazy_static;
+use std::path::Path;
 use std::sync::{Arc, Mutex};
 
 // use gate;
 use crate::core::traffic_class::TrafficClass;
 // #include "utils/common.h"
-use crate::utils::random::Random;
 use crate::core::scheduler::Scheduler;
-
+use crate::utils::random::Random;
 
 const MAX_GATES: u32 = 8192;
 
 const SYS_CPU_DIR: &str = "/sys/devices/system/cpu/cpu";
 const CORE_ID_FILE: &str = "topology/core_id";
 
-
 // TODO: worker threads doesn't necessarily be pinned to 1 core
-// 
+//
 //   n: kMaxWorkers
-// 
+//
 //   Role              DPDK lcore ID      Hardware core(s)
 //   --------------------------------------------------------
 //   worker 0                      0      1 specified core
@@ -27,7 +25,7 @@ const CORE_ID_FILE: &str = "topology/core_id";
 //   ...
 //   worker n-1                  n-1      1 specified core
 //   master          RTE_MAX_LCORE-1      all other cores that are allowed
-// 
+//
 #[derive(PartialEq)]
 pub enum WorkerStatus {
     Pausing, // transient state for blocking or quitting
@@ -41,8 +39,8 @@ struct Task;
 
 pub struct Worker {
     status: WorkerStatus,
-    wid: usize,  // always [0, K_MAX_WORKERS - 1]
-    core: i32, // TODO: should be cpuset_t
+    wid: usize, // always [0, K_MAX_WORKERS - 1]
+    core: i32,  // TODO: should be cpuset_t
     socket: u32,
     fd_event: u32,
     packet_pool: PacketPool,
@@ -56,7 +54,7 @@ pub struct Worker {
 impl Worker {
     pub const K_MAX_WORKERS: usize = 64;
     pub const K_ANY_WORKER: isize = -1; // unspecified worker ID
-    
+
     //  ----------------------------------------------------------------------
     //  functions below are invoked by non-worker threads (the master)
     //  ----------------------------------------------------------------------
@@ -70,7 +68,7 @@ impl Worker {
     pub fn is_pause_requested(&self) -> bool {
         self.status == WorkerStatus::Paused
     }
-    
+
     //  Block myself. Return nonzero if the worker needs to die
     pub fn block_worker(&self) -> i32 {
         todo!();
@@ -84,7 +82,7 @@ impl Worker {
     pub fn status(&self) -> &WorkerStatus {
         &self.status
     }
-    
+
     pub fn set_status(&mut self, status: WorkerStatus) {
         self.status = status;
     }
@@ -96,7 +94,7 @@ impl Worker {
     pub fn core(&self) -> i32 {
         self.core
     }
-    
+
     pub fn socket(&self) -> u32 {
         self.socket
     }
@@ -104,11 +102,11 @@ impl Worker {
     pub fn fd_event(&self) -> u32 {
         self.fd_event
     }
-    
+
     pub fn packet_pool(&self) -> &PacketPool {
         &self.packet_pool
     }
-    
+
     pub fn scheduler(&self) -> &Scheduler {
         &self.scheduler
     }
@@ -116,7 +114,7 @@ impl Worker {
     pub fn silent_drops(&self) -> u64 {
         self.silent_drops
     }
-    
+
     pub fn set_silent_drops(&mut self, drops: u64) {
         self.silent_drops = drops;
     }
@@ -136,7 +134,7 @@ impl Worker {
     pub fn current_ns(&self) -> u64 {
         self.current_ns
     }
-    
+
     pub fn set_current_ns(&mut self, ns: u64) {
         self.current_ns = ns;
     }
@@ -164,13 +162,12 @@ pub static mut NUM_WORKERS: usize = 0;
 // extern std::thread worker_threads[Worker::kMaxWorkers];
 
 // extern Worker *volatile workers[Worker::kMaxWorkers];
-lazy_static!{
-    static ref WORKERS: Arc<Mutex<Vec<Worker>>> = Arc::new(Mutex::new( {
+lazy_static! {
+    static ref WORKERS: Arc<Mutex<Vec<Worker>>> = Arc::new(Mutex::new({
         let v: Vec<Worker> = Vec::with_capacity(Worker::K_MAX_WORKERS);
         v
     }));
 }
-
 
 //  ------------------------------------------------------------------------
 //  functions below are invoked by non-worker threads (the master)
@@ -202,7 +199,6 @@ pub fn pause_all_workers() {
 //  Attach orphan TCs to workers. Note this does not ensure optimal placement.
 fn attach_orphans() {
     todo!();
-    
 }
 // void resume_worker(int wid);
 fn resume_worker(_wid: usize) {
@@ -220,7 +216,7 @@ pub fn is_any_worker_running() -> bool {
 // Check if a cpu is present by the presence of the cpu information for it
 pub fn is_cpu_present(core_id: i64) -> bool {
     let path: String = format!("{}/{}/{}", SYS_CPU_DIR, core_id, CORE_ID_FILE);
-    
+
     // Check if the file exists
     Path::new(&path).exists()
 }
@@ -231,7 +227,7 @@ pub fn is_worker_active(wid: usize) -> bool {
     if wid >= Worker::K_MAX_WORKERS {
         return false; // Ensure the worker ID is within bounds
     }
-    
+
     // Safely check if there's a worker present at the given index
     WORKERS.lock().unwrap().get(wid).is_some()
 }
@@ -266,15 +262,14 @@ pub fn list_orphan_tcs<'a>() -> &'a Vec<(i32, &'a mut TrafficClass)> {
 
 // Try to detach 'c' from a scheduler, or from the list of orhpan traffic
 // classes.
-// 
+//
 // Return true if successful. 'c' is now owned by the caller, and it must be
 // attached to a tree or destroyed.
-// 
+//
 // Otherwise, return false
 pub fn detach_tc(_c: &mut TrafficClass) -> bool {
     todo!()
 }
-
 
 // This struct is used as a resource manager to automatically pause workers if
 // running and then restarts workers if they were previously paused.
@@ -298,7 +293,6 @@ impl Drop for WorkerPauser {
 }
 
 // #endif  // BESS_WORKER_H_
-
 
 // #include <sched.h>
 // #include <sys/eventfd.h>
@@ -346,7 +340,6 @@ impl Drop for WorkerPauser {
 //   int core;
 //   Scheduler *scheduler;
 // };
-
 
 // int is_worker_core(int cpu) {
 //   int wid;
