@@ -2,7 +2,7 @@
 
 
 ## bess-rs
-A Rust implementation of [BESS(Berkeley Extensible Software Switch)](https://github.com/NetSys/bess).
+An implementation of [BESS](https://github.com/NetSys/bess) in Rust.
 
 ## Dependencies
 - Python 3+ (for bessctl)
@@ -12,7 +12,7 @@ A Rust implementation of [BESS(Berkeley Extensible Software Switch)](https://git
 - `pip install --user scapy`
 
 ## Objective
-Experimenting with Rust for fast packet processing.
+A high-performance and memory-safe data plane for 5G.
 
 ## Usage
 ```=shell
