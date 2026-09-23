@@ -12,7 +12,7 @@ An implementation of [BESS](https://github.com/NetSys/bess) in Rust.
 - `pip install --user scapy`
 
 ## Objective
-A high-performance and memory-safe data plane for 5G.
+A high-performance and memory-safe data plane for 5G/6G.
 
 ## Usage
 ```=shell
